@@ -1,5 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><title>UX Design Crew Reports</title></head>
-<body><h1>UX Design Crew Reports</h1><p>Relatórios serão publicados aqui.</p></body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Design Crew — Propostas Bifurcador Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #F4F5F9;
+    color: #0D0D1B;
+    padding: 40px 24px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  .subtitle { font-size: 14px; color: #6B7190; margin-top: 8px; line-height: 1.5; }
+  .cards { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
+  .card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1.5px solid #E8EAF0;
+    transition: all 0.2s;
+  }
+  .card:hover { border-color: #434CE4; box-shadow: 0 4px 16px rgba(67,76,228,0.08); }
+  .card h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .card .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .tag.evolution { background: #EBF6FD; color: #009EE3; }
+  .tag.innovation { background: #F0EBFD; color: #434CE4; }
+  .tag.radical { background: #E6F9EE; color: #008744; }
+  .tag.ab { background: #FFF3E0; color: #E65100; }
+  .card p { font-size: 14px; color: #6B7190; line-height: 1.5; margin-top: 8px; }
+  .card a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #434CE4;
+    text-decoration: none;
+    transition: gap 0.2s;
+  }
+  .card a:hover { gap: 10px; }
+</style>
+</head>
+<body>
+
+<h1>Propostas Alternativas — Bifurcador de Onboarding</h1>
+<p class="subtitle">UX Design Crew | ux-designer-criativo | 21 Mar 2026<br>
+Novas abordagens para o momento de decisao "vender ou nao" no onboarding CPF do Mercado Pago.</p>
+
+<div class="cards">
+
+  <div class="card" style="border-color: #009EE3; border-width: 2px;">
+    <span class="tag evolution">Relatorio Completo</span>
+    <h2>Analise do Bifurcador Seller — Onboarding MP</h2>
+    <p>Relatorio consolidado com diagnostico heuristico, benchmarks de 9 fintechs, recomendacoes priorizadas, 4 propostas visuais, 8 hipoteses de experimentacao e notas criticas. Compilacao completa do UX Design Crew.</p>
+    <a href="reports/2026-03-21-bifurcador-seller-mp.html">Ver relatorio completo &rarr;</a>
+  </div>
+
+  <div class="card">
+    <span class="tag evolution">Evolucao</span>
+    <h2>Proposta A — Quick Win Evoluida</h2>
+    <p>Evolucao da Proposta 2 com badge animado de "conta criada", feature cards com hierarquia clara, upsell card com gradiente sutil e micro-interacoes em cascata. Tokens Andes X aplicados.</p>
+    <a href="reports/proposta-a-evolucao-quick-win.html">Ver proposta &rarr;</a>
+  </div>
+
+  <div class="card">
+    <span class="tag innovation">Inovacao</span>
+    <h2>Proposta B — Experimentar Antes de Decidir</h2>
+    <p>Em vez de perguntar, mostra. Simulacao visual de um pagamento recebido de R$150 com recibo detalhado, taxa transparente e passos simples. O usuario "sente" antes de escolher.</p>
+    <a href="reports/proposta-b-experimentar-antes.html">Ver proposta &rarr;</a>
+  </div>
+
+  <div class="card">
+    <span class="tag radical">Sem bifurcacao</span>
+    <h2>Proposta C — Discovery Contextual</h2>
+    <p>E se o bifurcador nao existisse? Home pos-onboarding que sugere venda contextualmente quando o usuario recebe um Pix. Card de discovery aparece com base em comportamento real.</p>
+    <a href="reports/proposta-c-sem-bifurcacao.html">Ver proposta &rarr;</a>
+  </div>
+
+  <div class="card">
+    <span class="tag ab">Teste A/B</span>
+    <h2>Variacao A/B — Proposta B com Social Proof</h2>
+    <p>Versao compacta da Proposta B adicionando social proof ("+12 mil pessoas ativaram vendas essa semana") e simulacao mais condensada. Hipotese: prova social aumenta conversao de venda.</p>
+    <a href="reports/variacao-ab-proposta-b.html">Ver variacao &rarr;</a>
+  </div>
+
+</div>
+
+</body>
 </html>

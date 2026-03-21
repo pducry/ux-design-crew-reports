@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta C — Sem Bifurcação (Discovery Contextual)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #F4F5F9;
+    color: #0D0D1B;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .device-frame {
+    width: 375px;
+    min-height: 100vh;
+    background: #F4F5F9;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Navbar glassmorphism */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #009EE3, #434CE4);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .greeting {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0D0D1B;
+  }
+  .navbar-icons {
+    display: flex; gap: 8px;
+  }
+  .icon-btn {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; cursor: pointer;
+    border-radius: 12px;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .icon-btn:hover { background: rgba(0,0,0,0.04); }
+  .icon-btn .badge-dot {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 8px; height: 8px;
+    background: #FF5252;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  /* --- Saldo Card --- */
+  .balance-card {
+    margin: 8px 24px 0;
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .balance-label {
+    font-size: 12px;
+    color: #6B7190;
+    font-weight: 500;
+  }
+  .balance-amount {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0D0D1B;
+    margin-top: 4px;
+    letter-spacing: -0.5px;
+  }
+  .balance-yield {
+    font-size: 12px;
+    color: #00A650;
+    font-weight: 600;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Shortcuts */
+  .shortcuts {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #F4F5F9;
+  }
+  .shortcut {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    min-width: 64px;
+  }
+  .shortcut-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: #EBF6FD;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .shortcut:hover .shortcut-icon {
+    transform: scale(1.05);
+    background: #D6EFFA;
+  }
+  .shortcut:active .shortcut-icon { transform: scale(0.95); }
+  .shortcut-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6B7190;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* --- Discovery Card Contextual (Vender) --- */
+  .discovery-card {
+    margin: 16px 24px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .discovery-card:hover {
+    box-shadow: 0 4px 20px rgba(67, 76, 228, 0.12);
+  }
+
+  .discovery-top {
+    background: linear-gradient(135deg, #434CE4 0%, #009EE3 100%);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .discovery-top::after {
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    right: -20px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+  }
+  .discovery-top .disc-tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .discovery-top h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.33;
+  }
+  .discovery-top p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.46;
+    margin-top: 4px;
+  }
+
+  .discovery-bottom {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .disc-cta {
+    font-size: 14px;
+    font-weight: 600;
+    color: #434CE4;
+  }
+  .disc-arrow {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #F0EBFD;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s ease;
+  }
+  .discovery-card:hover .disc-arrow {
+    transform: translateX(4px);
+  }
+
+  /* --- Contexto de trigger: transação recebida --- */
+  .context-trigger {
+    margin: 0 24px 16px;
+    padding: 16px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    border-left: 3px solid #00A650;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    animation: fadeUp 0.4s ease 0.3s both;
+  }
+  .context-icon {
+    width: 40px; height: 40px; min-width: 40px;
+    border-radius: 50%;
+    background: #E6F9EE;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .context-text h3 {
+    font-size: 13px; font-weight: 600; color: #0D0D1B;
+  }
+  .context-text p {
+    font-size: 12px; color: #6B7190; margin-top: 2px;
+  }
+  .context-amount {
+    margin-left: auto;
+    font-size: 14px;
+    font-weight: 700;
+    color: #00A650;
+    white-space: nowrap;
+  }
+
+  /* --- Seção "Mais pra você" --- */
+  .section-title {
+    padding: 8px 24px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0D0D1B;
+    animation: fadeUp 0.4s ease 0.8s both;
+  }
+
+  .more-cards {
+    padding: 0 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .more-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    animation: fadeUp 0.4s ease both;
+  }
+  .more-card:nth-child(1) { animation-delay: 0.9s; }
+  .more-card:nth-child(2) { animation-delay: 1s; }
+  .more-card:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .more-card-icon {
+    width: 44px; height: 44px; min-width: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .more-card-icon.yellow { background: #FFF8CC; }
+  .more-card-icon.blue { background: #EBF6FD; }
+  .more-card-content h3 {
+    font-size: 14px; font-weight: 600; color: #0D0D1B;
+  }
+  .more-card-content p {
+    font-size: 12px; color: #6B7190; margin-top: 2px; line-height: 1.4;
+  }
+  .more-card-chevron {
+    margin-left: auto;
+    color: #9BA0B8;
+  }
+
+  /* --- Bottom Nav --- */
+  .bottom-nav {
+    position: sticky;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 24px;
+    border-top: 1px solid #E8EAF0;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    min-width: 56px;
+  }
+  .nav-item span {
+    font-size: 10px;
+    font-weight: 500;
+    color: #9BA0B8;
+    font-family: 'Inter', sans-serif;
+  }
+  .nav-item.active span { color: #009EE3; }
+  .nav-item.active svg { color: #009EE3; }
+</style>
+</head>
+<body>
+
+<div class="device-frame">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="avatar" aria-hidden="true">M</div>
+      <span class="greeting">Oi, Marina</span>
+    </div>
+    <div class="navbar-icons">
+      <button class="icon-btn" aria-label="Notificações">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D0D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="badge-dot" aria-hidden="true"></div>
+      </button>
+      <button class="icon-btn" aria-label="Configurações">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D0D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Saldo -->
+  <section class="balance-card" aria-label="Saldo disponível">
+    <div class="balance-label">Saldo disponível</div>
+    <div class="balance-amount">R$ 1.247,80</div>
+    <div class="balance-yield">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00A650" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      +R$ 3,42 rendendo hoje
+    </div>
+
+    <div class="shortcuts" role="navigation" aria-label="Ações rápidas">
+      <button class="shortcut" aria-label="Pix">
+        <div class="shortcut-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+        </div>
+        <span class="shortcut-label">Pix</span>
+      </button>
+      <button class="shortcut" aria-label="Pagar">
+        <div class="shortcut-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <span class="shortcut-label">Pagar</span>
+      </button>
+      <button class="shortcut" aria-label="Transferir">
+        <div class="shortcut-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        </div>
+        <span class="shortcut-label">Transferir</span>
+      </button>
+      <button class="shortcut" aria-label="Cobrar">
+        <div class="shortcut-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <span class="shortcut-label">Cobrar</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Trigger contextual: Pix recebido como "pagamento" -->
+  <div class="context-trigger" role="alert" aria-label="Pix recebido">
+    <div class="context-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00A650" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="context-text">
+      <h3>Pix recebido</h3>
+      <p>Carlos Oliveira - agora</p>
+    </div>
+    <span class="context-amount">+ R$ 85,00</span>
+  </div>
+
+  <!-- Discovery Card: Aparece contextualmente após receber Pix -->
+  <div class="discovery-card" role="button" tabindex="0" aria-label="Descubra como vender com Mercado Pago">
+    <div class="discovery-top">
+      <div class="disc-tag">Sugestão para você</div>
+      <h2>Recebe pagamentos com frequência?</h2>
+      <p>Ative ferramentas de venda e ganhe link de pagamento, QR e taxas menores.</p>
+    </div>
+    <div class="discovery-bottom">
+      <span class="disc-cta">Conhecer ferramentas</span>
+      <div class="disc-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#434CE4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mais para você -->
+  <h2 class="section-title">Mais pra você</h2>
+  <div class="more-cards">
+    <div class="more-card" role="button" tabindex="0">
+      <div class="more-card-icon yellow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="more-card-content">
+        <h3>Peça seu cartão grátis</h3>
+        <p>Débito e crédito sem anuidade</p>
+      </div>
+      <div class="more-card-chevron">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="more-card" role="button" tabindex="0">
+      <div class="more-card-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8"/><path d="M8 8h8v8"/></svg>
+      </div>
+      <div class="more-card-content">
+        <h3>Investir e render</h3>
+        <p>Seu dinheiro rendendo mais que a poupança</p>
+      </div>
+      <div class="more-card-chevron">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <button class="nav-item active" aria-label="Início">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      <span>Início</span>
+    </button>
+    <button class="nav-item" aria-label="Atividade">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Atividade</span>
+    </button>
+    <button class="nav-item" aria-label="Mais">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      <span>Mais</span>
+    </button>
+  </nav>
+</div>
+
+</body>
+</html>

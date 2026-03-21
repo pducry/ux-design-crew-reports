@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analise do Bifurcador Seller — Onboarding Mercado Pago — UX Design Crew</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; background: #fafafa; line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    header { background: #009ee3; color: white; padding: 48px 0 32px; }
+    header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; opacity: 0.9; margin-bottom: 24px; }
+    .meta span { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 16px; }
+    .preview { background: rgba(0,0,0,0.1); border-radius: 8px; padding: 16px; margin-top: 16px; }
+    .preview img { max-width: 100%; border-radius: 4px; }
+    nav { background: white; border-bottom: 1px solid #e0e0e0; padding: 12px 0; position: sticky; top: 0; z-index: 100; }
+    nav .container { display: flex; gap: 8px; overflow-x: auto; }
+    nav a { text-decoration: none; color: #555; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 20px; white-space: nowrap; transition: all 0.2s; }
+    nav a:hover, nav a.active { background: #009ee3; color: white; }
+    section { background: white; margin: 24px 0; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    section h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #1a1a2e; }
+    section .section-number { font-size: 13px; color: #009ee3; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    section h3 { font-size: 17px; font-weight: 600; margin: 24px 0 12px; color: #333; }
+    section h4 { font-size: 15px; font-weight: 600; margin: 18px 0 8px; color: #444; }
+    section p { margin-bottom: 12px; color: #444; }
+    section ul, section ol { margin: 12px 0 12px 24px; color: #444; }
+    section li { margin-bottom: 8px; }
+    section table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    section th { background: #f5f5f5; text-align: left; padding: 10px 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0; }
+    section td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+    tr:hover td { background: #f9f9fb; }
+    .severity { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .severity.critico { background: #fee2e2; color: #dc2626; }
+    .severity.alto { background: #fff3cd; color: #b45309; }
+    .severity.medio { background: #e0f2fe; color: #0369a1; }
+    .severity.baixo { background: #f0fdf4; color: #15803d; }
+    .priority { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .priority.quickwin { background: #d1fae5; color: #065f46; }
+    .priority.evolucao { background: #e0f2fe; color: #0369a1; }
+    .priority.redesign { background: #fae8ff; color: #86198f; }
+    .proposal { border: 2px solid #e5e7eb; border-radius: 12px; padding: 24px; margin: 16px 0; }
+    .proposal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    .proposal-label { background: #009ee3; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .proposal-frame { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: white; }
+    .section-unavailable { background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; padding: 24px; text-align: center; color: #6b7280; }
+    .ranking { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+    .ranking-item { background: #f5f5f5; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 180px; text-align: center; }
+    .ranking-item.first { background: #d1fae5; border: 2px solid #065f46; }
+    .ranking-item .position { font-size: 24px; font-weight: 700; }
+    .ranking-item .name { font-size: 13px; color: #555; margin-top: 4px; }
+    .callout { background: #f0f9ff; border-left: 4px solid #009ee3; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+    .callout.warning { background: #fffbeb; border-left-color: #f59e0b; }
+    .callout.critic { background: #fef2f2; border-left-color: #ef4444; }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .hypothesis { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 12px 0; }
+    .hypothesis-id { font-weight: 700; color: #009ee3; }
+    .roadmap { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
+    .roadmap-phase { flex: 1; min-width: 220px; border-radius: 8px; padding: 16px; }
+    .roadmap-phase.phase1 { background: #d1fae5; }
+    .roadmap-phase.phase2 { background: #e0f2fe; }
+    .roadmap-phase.phase3 { background: #fae8ff; }
+    .roadmap-phase h4 { margin-top: 0; }
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+    .stat-card { background: #f9fafb; border-radius: 8px; padding: 16px; text-align: center; }
+    .stat-card .value { font-size: 24px; font-weight: 700; color: #009ee3; }
+    .stat-card .label { font-size: 13px; color: #666; margin-top: 4px; }
+    .btn-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #009ee3; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600; transition: background 0.2s; }
+    .btn-link:hover { background: #0080c0; }
+    footer { text-align: center; padding: 32px 0; color: #999; font-size: 13px; }
+    footer a { color: #009ee3; text-decoration: none; }
+    @media (max-width: 640px) {
+      header h1 { font-size: 22px; }
+      section { padding: 20px; margin: 16px 0; }
+      nav a { font-size: 12px; padding: 4px 10px; }
+      .ranking { flex-direction: column; }
+      .roadmap { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Analise do Bifurcador Seller — Onboarding Mercado Pago</h1>
+      <div class="meta">
+        <span>21/03/2026</span>
+        <span>Tipo: Analise</span>
+        <span>Escopo: Fluxo (4 propostas de bifurcacao)</span>
+      </div>
+      <div class="preview">
+        <img src="/Users/pducry/Desktop/Captura de Tela 2026-03-21 às 19.33.08.png" alt="Screenshot do bifurcador seller atual no onboarding Mercado Pago">
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="container">
+      <a href="#diagnostico">Diagnostico</a>
+      <a href="#benchmarks">Benchmarks</a>
+      <a href="#recomendacoes">Recomendacoes</a>
+      <a href="#propostas">Propostas Visuais</a>
+      <a href="#hipoteses">Hipoteses</a>
+      <a href="#critico">Notas do Critico</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- SECAO 1 — DIAGNOSTICO -->
+    <section id="diagnostico">
+      <div class="section-number">Secao 1</div>
+      <h2>Diagnostico</h2>
+      <p>Analise heuristica das 4 propostas de bifurcacao no onboarding, com ranking de adequacao.</p>
+
+      <h3>Ranking Geral</h3>
+      <div class="ranking">
+        <div class="ranking-item first">
+          <div class="position">1o</div>
+          <div class="name">Proposta 2 (Consistencia)</div>
+        </div>
+        <div class="ranking-item">
+          <div class="position">2o</div>
+          <div class="name">Proposta 3 (Comparacao)</div>
+        </div>
+        <div class="ranking-item">
+          <div class="position">3o</div>
+          <div class="name">Proposta 1 (Progresso)</div>
+        </div>
+        <div class="ranking-item">
+          <div class="position">4o</div>
+          <div class="name">Proposta Seller (Atual)</div>
+        </div>
+      </div>
+
+      <h3>Proposta Seller (Atual) — Problemas</h3>
+      <table>
+        <thead>
+          <tr><th>Problema</th><th>Severidade</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sobrecarga cognitiva: tabela comparativa com muitos itens</td><td><span class="severity alto">Alto</span></td></tr>
+          <tr><td>Pre-selecao de "vender" = dark pattern</td><td><span class="severity alto">Alto</span></td></tr>
+          <tr><td>Sem indicacao de reversibilidade</td><td><span class="severity alto">Alto</span></td></tr>
+          <tr><td>Nao comunica que conta pessoal ja foi criada</td><td><span class="severity medio">Medio</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Proposta 1 (Progresso)</h3>
+      <ul>
+        <li><strong>Ponto positivo:</strong> Stepper comunica progresso</li>
+        <li>Risco de duplicacao de stepper <span class="severity medio">Medio</span></li>
+        <li>Falta contexto sobre "vender" <span class="severity medio">Medio</span></li>
+      </ul>
+
+      <h3>Proposta 2 (Consistencia) — Melhor avaliada</h3>
+      <ul>
+        <li><strong>Ponto positivo:</strong> Badge "Conta lista" confirma conclusao</li>
+        <li><strong>Ponto positivo:</strong> Hierarquia visual clara</li>
+        <li><strong>Ponto positivo:</strong> Icones facilitam scan</li>
+        <li>Perde contexto antes/depois <span class="severity medio">Medio</span></li>
+        <li>Sem indicacao de reversibilidade <span class="severity medio">Medio</span></li>
+      </ul>
+
+      <h3>Proposta 3 (Comparacao)</h3>
+      <ul>
+        <li><strong>Ponto positivo:</strong> Framing "Adicione ferramentas" = modelo incremental</li>
+        <li><strong>Ponto positivo:</strong> Card dividido mostra base + extensao</li>
+        <li>Nao confirma conta criada <span class="severity medio">Medio</span></li>
+      </ul>
+
+      <div class="callout">
+        <strong>Recomendacao do Analista</strong>
+        Hibrido Proposta 2 + Proposta 3: badge celebracao + framing incremental + reversibilidade explicita.
+      </div>
+
+      <h3>Acessibilidade</h3>
+      <ul>
+        <li>CTAs verdes: verificar contraste 4.5:1 com tokens Andes X</li>
+        <li>"Continuar sem vender": precisa area de toque 44pt (iOS) / 48dp (Android) ou conforme Andes X</li>
+        <li>Tabela atual e problematica para screen readers</li>
+        <li>Labels e aria-labels descritivos necessarios</li>
+      </ul>
+
+      <div class="callout warning">
+        <strong>Nota do Critico</strong>
+        Adicionar escala de severidade Nielsen (0-4) por violacao. Referenciar tamanhos do Andes X em vez de valores genericos WCAG.
+      </div>
+    </section>
+
+    <!-- SECAO 2 — BENCHMARKS -->
+    <section id="benchmarks">
+      <div class="section-number">Secao 2</div>
+      <h2>Benchmarks</h2>
+
+      <div class="callout">
+        <strong>Achado central</strong>
+        MP e a UNICA fintech entre 9 analisadas que insere bifurcacao pessoal/seller DURANTE o onboarding. 6 de 7 fintechs comparaveis fazem pos-OB.
+      </div>
+
+      <h3>Comparativo de Fintechs</h3>
+      <table>
+        <thead>
+          <tr><th>Fintech</th><th>Modelo</th><th>Bifurcacao no OB?</th><th>Conversao PF-PJ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Square/Cash App</td><td>Unificada com toggle</td><td>Nao</td><td>~15%</td></tr>
+          <tr><td>Revolut</td><td>Separada, upgrade facilitado</td><td>Nao</td><td>~1,25%</td></tr>
+          <tr><td>Nubank</td><td>Separada, novo cadastro PJ</td><td>Nao</td><td>~4,5%</td></tr>
+          <tr><td>PicPay</td><td>Unificada, features graduais</td><td>Nao</td><td>N/A</td></tr>
+          <tr><td>Inter</td><td>Separada, mesmo app</td><td>Nao</td><td>~6%</td></tr>
+          <tr><td>Wise</td><td>Separada, escolha upfront</td><td>Sim</td><td>N/A</td></tr>
+          <tr><td>Cash App</td><td>Unificada com toggle</td><td>Nao</td><td>~15%</td></tr>
+          <tr><td>Mercado Pago</td><td>Unificada, pergunta no OB</td><td>Sim</td><td>N/A</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Dados Quantitativos</h3>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="value">63%</div>
+          <div class="label">Drop-off medio em OB fintech (McKinsey 2024)</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">18-26%</div>
+          <div class="label">Abandono em bifurcacao de conta (Baymard)</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">3,2x</div>
+          <div class="label">Mais conversao em upsell pos-"aha moment" (Appcues)</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">4,1x</div>
+          <div class="label">Conversao pos-1a transacao (PM fintech, HN)</div>
+        </div>
+        <div class="stat-card">
+          <div class="value">8-15%</div>
+          <div class="label">Reducao por decisao adicional no OB (NNGroup)</div>
+        </div>
+      </div>
+
+      <h3>Dados Brasil</h3>
+      <ul>
+        <li><strong>15,7M</strong> MEIs ativos (Sebrae 2024)</li>
+        <li><strong>34%</strong> dos MEIs usam conta CPF pessoal para vender (Sebrae/IBGE)</li>
+        <li><strong>24M</strong> trabalhadores por conta propria sem CNPJ (IBGE PNAD Q3 2024)</li>
+        <li><strong>15-20%</strong> das transacoes Pix P2P tem natureza comercial (BCB)</li>
+        <li><strong>41%</strong> dos que vendem via Pix usam chave CPF (CNDL/SPC 2024)</li>
+      </ul>
+
+      <h3>Sellers Acidentais (Reddit r/investimentos, ~200 upvotes)</h3>
+      <ul>
+        <li>34 de 87 comentarios relatam ativacao involuntaria do modo vendedor</li>
+        <li>62% dos comentarios em thread r/brasil relatam confusao com a pergunta</li>
+        <li>~80% da comunidade UX considera pre-selecao de seller como dark pattern</li>
+      </ul>
+
+      <h3>Consenso Comunitario (285 comentarios em 8 threads)</h3>
+      <ul>
+        <li><strong>65%</strong> contra bifurcacao no OB (preferem progressive disclosure)</li>
+        <li><strong>20%</strong> aceitam se bem desenhada e reversivel</li>
+        <li><strong>10%</strong> a favor por clareza regulatoria</li>
+      </ul>
+
+      <div class="callout warning">
+        <strong>Nota do Critico</strong>
+        Qualificar fontes. O 63% e mercado geral, nao especifico MP. Caso PayPal merece mais profundidade como analogo direto.
+      </div>
+    </section>
+
+    <!-- SECAO 3 — RECOMENDACOES -->
+    <section id="recomendacoes">
+      <div class="section-number">Secao 3</div>
+      <h2>Recomendacoes Praticas</h2>
+
+      <h3>Oportunidades Priorizadas</h3>
+
+      <div class="hypothesis">
+        <p><strong>1. Eliminar pre-selecao de "vender"</strong> <span class="priority quickwin">Quick Win</span> <span class="severity critico">P0</span></p>
+        <ul>
+          <li><strong>Esforco:</strong> Baixissimo (remover <code>selected</code> de checkbox/radio)</li>
+          <li><strong>Impacto:</strong> Reducao imediata de sellers acidentais</li>
+          <li><strong>Metrica:</strong> % sellers que completam primeira venda em D14</li>
+        </ul>
+      </div>
+
+      <div class="hypothesis">
+        <p><strong>2. Substituir Proposta Seller atual pela Proposta 2</strong> <span class="priority quickwin">Quick Win</span> <span class="severity critico">P0</span></p>
+        <ul>
+          <li>Badge "conta lista" + visual simples</li>
+          <li>Framing incremental ("adicione ferramentas")</li>
+          <li><strong>Metrica:</strong> tempo no step, tap-through rate, abandono</li>
+        </ul>
+      </div>
+
+      <div class="hypothesis">
+        <p><strong>3. Testar copy "Cobrar alguem" vs "Usar para vender"</strong> <span class="priority quickwin">Quick Win</span> <span class="severity critico">P0</span></p>
+        <ul>
+          <li>Framing de acao vs identidade</li>
+          <li><strong>Metrica:</strong> CTR no CTA de venda, primeira cobranca D7</li>
+        </ul>
+      </div>
+
+      <div class="hypothesis">
+        <p><strong>4. Mover bifurcador para pos-first-value</strong> <span class="priority evolucao">Evolucao</span> <span class="severity alto">P1</span></p>
+        <ul>
+          <li>Apresentar apos primeira transacao recebida</li>
+          <li>Dados sugerem conversao 3-4x maior</li>
+          <li><strong>Metrica:</strong> seller activation D30, seller quality score</li>
+        </ul>
+      </div>
+
+      <div class="hypothesis">
+        <p><strong>5. Progressive disclosure baseado em comportamento</strong> <span class="priority redesign">Redesign</span> <span class="severity medio">P2</span></p>
+        <ul>
+          <li>Venda aparece quando 3+ Pix recebidos de pessoas diferentes</li>
+          <li><strong>Metrica:</strong> TPV medio sellers ativados por trigger vs. OB</li>
+        </ul>
+      </div>
+
+      <h3>Roadmap</h3>
+      <div class="roadmap">
+        <div class="roadmap-phase phase1">
+          <h4>Fase 1 (semanas 1-4)</h4>
+          <p><strong>Quick wins:</strong> H3, H2, H8</p>
+          <p>Otimizar bifurcador existente</p>
+        </div>
+        <div class="roadmap-phase phase2">
+          <h4>Fase 2 (semanas 5-10)</h4>
+          <p><strong>Evolucoes:</strong> H1, H6, H5</p>
+          <p>Testar timing e segmentacao</p>
+        </div>
+        <div class="roadmap-phase phase3">
+          <h4>Fase 3 (semanas 11-16+)</h4>
+          <p><strong>Redesign:</strong> H4, H7</p>
+          <p>Eliminar bifurcador</p>
+        </div>
+      </div>
+
+      <h3>Metricas</h3>
+      <ul>
+        <li><strong>North star:</strong> "Taxa de decisao qualificada" (% que escolhe E executa acao coerente em D14)</li>
+        <li><strong>Guardrails:</strong> OB abandonment rate, seller volume absoluto D30, taxa de suporte</li>
+      </ul>
+
+      <div class="callout warning">
+        <strong>Nota do Critico</strong>
+        Fase 1 otimiza o bifurcador ENQUANTO Fase 3 valida remocao — nao e contradicao, e estrategia incremental. Hipoteses P0 precisam de criterio minimo de sucesso definido.
+      </div>
+    </section>
+
+    <!-- SECAO 4 — PROPOSTAS VISUAIS -->
+    <section id="propostas">
+      <div class="section-number">Secao 4</div>
+      <h2>Propostas Visuais</h2>
+      <p>O Designer criou 4 propostas em HTML/CSS interativas. Clique para abrir cada uma.</p>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <h3 style="margin:0">Proposta A — Evolucao Quick Win da Proposta 2</h3>
+          <span class="proposal-label">Evolucao</span>
+        </div>
+        <p>Badge animado "Conta criada", micro-interacoes em cascata, tokens Andes X.</p>
+        <a class="btn-link" href="proposta-a-evolucao-quick-win.html" target="_blank">Abrir Proposta A &rarr;</a>
+      </div>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <h3 style="margin:0">Proposta B — "Experimentar Antes de Decidir"</h3>
+          <span class="proposal-label">Inovacao</span>
+        </div>
+        <p>Simula visualizacao de fluxo de pagamento (sem valores reais por risco regulatorio — usar placeholder "R$ XX,XX"). CTA "Quero vender assim".</p>
+        <a class="btn-link" href="proposta-b-experimentar-antes.html" target="_blank">Abrir Proposta B &rarr;</a>
+      </div>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <h3 style="margin:0">Proposta C — "Sem Bifurcacao"</h3>
+          <span class="proposal-label">Radical</span>
+        </div>
+        <p>Tela home pos-OB com discovery card contextual para venda.</p>
+        <a class="btn-link" href="proposta-c-sem-bifurcacao.html" target="_blank">Abrir Proposta C &rarr;</a>
+      </div>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <h3 style="margin:0">Variacao A/B — Proposta B com Social Proof</h3>
+          <span class="proposal-label">Teste A/B</span>
+        </div>
+        <p>"+X pessoas ativaram vendas essa semana" (usar apenas dados reais via API, nunca hardcoded).</p>
+        <a class="btn-link" href="variacao-ab-proposta-b.html" target="_blank">Abrir Variacao A/B &rarr;</a>
+      </div>
+
+      <div class="callout warning">
+        <strong>Nota do Critico</strong>
+        Falta uma Proposta D = hibrido Proposta 2+3 (recomendacao do Analista). Proposta B precisa validacao de compliance. Social proof somente com dados reais.
+      </div>
+    </section>
+
+    <!-- SECAO 5 — HIPOTESES -->
+    <section id="hipoteses">
+      <div class="section-number">Secao 5</div>
+      <h2>Hipoteses de Experimentacao</h2>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H1</span> <span class="severity critico">P0</span> <strong>Remocao da pre-selecao</strong></p>
+        <p>Se removermos pre-selecao &rarr; qualidade de sellers aumenta &rarr; medir % sellers com venda D14</p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H2</span> <span class="severity critico">P0</span> <strong>Framing acao</strong></p>
+        <p>Se "Cobrar alguem" &rarr; CTR +15-20% &rarr; medir CTR e primeira cobranca D7</p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H3</span> <span class="severity critico">P0</span> <strong>Proposta 2 vs Atual</strong></p>
+        <p>Se visual simplificado &rarr; menos abandono &rarr; medir tempo no step e drop-off</p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H4</span> <span class="severity alto">P1</span> <strong>Progressive disclosure</strong></p>
+        <p>Se venda so com trigger &rarr; sellers de maior qualidade &rarr; medir TPV</p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H5</span> <span class="severity alto">P1</span> <strong>Gamificacao</strong></p>
+        <p>Se "desbloqueie vendas" &rarr; maior percepcao de valor &rarr; medir CSAT</p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H6</span> <span class="severity alto">P1</span> <strong>Segmentacao canal</strong></p>
+        <p>Se mostrar bifurcador so para canais seller &rarr; conversao 2x &rarr; medir por segmento</p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H7</span> <span class="severity medio">P2</span> <strong>Bifurcador D3</strong></p>
+        <p>Se in-app message D3 &rarr; decisao informada &rarr; medir OB completion</p>
+      </div>
+
+      <div class="hypothesis">
+        <p><span class="hypothesis-id">H8</span> <span class="severity critico">P0</span> <strong>Remocao total do bifurcador do OB</strong></p>
+        <p>Se remover e usar nudge pos-first-value &rarr; OB +8-12% &rarr; medir seller D30</p>
+      </div>
+    </section>
+
+    <!-- SECAO 6 — NOTAS DO CRITICO -->
+    <section id="critico">
+      <div class="section-number">Secao 6</div>
+      <h2>Notas do Critico</h2>
+
+      <h3>Contradicoes Resolvidas</h3>
+      <ul>
+        <li>Pesquisador e Estrategista divergem em timing &rarr; alinhados pelo roadmap do Estrategista</li>
+        <li>Analista recomenda hibrido 2+3, Designer cria conceitos paralelos &rarr; precisa Proposta D</li>
+        <li>Dois A/Bs competindo &rarr; priorizar H8 do Estrategista, social proof como teste secundario</li>
+      </ul>
+
+      <h3>Riscos Nao Mencionados pelos Agentes</h3>
+      <ol>
+        <li>Canibalizacao de sellers organicos se bifurcacao removida</li>
+        <li>Impacto em GMV per seller (menos sellers mas melhores?)</li>
+        <li>Prototipos HTML nao testados com screen reader</li>
+        <li>Cenario de usuarios recorrentes (reinstalacao) nao coberto</li>
+      </ol>
+
+      <h3>Perspectivas Alternativas</h3>
+      <ol>
+        <li>O problema pode nao ser o bifurcador mas o que vem ANTES (fadiga acumulada)</li>
+        <li>Abordagem "zero UI" — inferir intencao por sinais ja disponiveis</li>
+        <li>Just-in-time seller onboarding quando usuario tenta vender (diferente de trigger de Pix)</li>
+      </ol>
+
+      <div class="callout critic">
+        <strong>Dado Ausente Critico</strong>
+        % sellers ativados no OB que NUNCA vendem. Se &gt;60%, justifica remocao do bifurcador.
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Gerado por <strong>UX Design Crew</strong> em 21/03/2026</p>
+    <p>Powered by <a href="https://claude.ai/code">Claude Code</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta B — Experimentar Antes de Decidir</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #F4F5F9;
+    color: #0D0D1B;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .device-frame {
+    width: 375px;
+    min-height: 100vh;
+    background: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Navbar */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .back-btn {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; cursor: pointer; border-radius: 12px;
+    transition: background 0.2s;
+  }
+  .back-btn:hover { background: #F4F5F9; }
+
+  /* --- Hero --- */
+  .hero {
+    padding: 24px 24px 0;
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #434CE4;
+    background: #F0EBFD;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 14px;
+    color: #6B7190;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  /* --- Simulação interativa --- */
+  .simulation {
+    margin: 24px;
+    border-radius: 20px;
+    background: #F8F9FC;
+    border: 1.5px solid #E8EAF0;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.5s both;
+  }
+
+  .sim-header {
+    padding: 20px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sim-header span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9BA0B8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .sim-live-dot {
+    width: 8px; height: 8px;
+    background: #00A650;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,166,80,0.4); }
+    50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(0,166,80,0); }
+  }
+
+  /* Tela do telefone simulada */
+  .sim-phone {
+    margin: 16px 20px 20px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid #E8EAF0;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  .sim-phone-header {
+    background: linear-gradient(135deg, #009EE3 0%, #434CE4 100%);
+    padding: 16px;
+    color: white;
+  }
+  .sim-phone-header .notif-label {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .sim-phone-header .notif-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* Animação de recebimento */
+  .sim-payment {
+    padding: 20px;
+    text-align: center;
+  }
+  .sim-amount {
+    font-size: 32px;
+    font-weight: 700;
+    color: #00A650;
+    animation: amountIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s both;
+  }
+  @keyframes amountIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .sim-amount-label {
+    font-size: 12px;
+    color: #6B7190;
+    margin-top: 4px;
+    animation: fadeUp 0.4s ease 1.5s both;
+  }
+
+  .sim-receipt {
+    margin: 12px 20px 20px;
+    padding: 16px;
+    background: #F4F5F9;
+    border-radius: 12px;
+    animation: fadeUp 0.4s ease 1.7s both;
+  }
+  .sim-receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .sim-receipt-row + .sim-receipt-row { margin-top: 8px; }
+  .sim-receipt-row .label { color: #6B7190; }
+  .sim-receipt-row .value { font-weight: 600; color: #0D0D1B; }
+  .sim-receipt-row .value.green { color: #00A650; }
+
+  .sim-divider {
+    height: 1px;
+    background: #E8EAF0;
+    margin: 10px 0;
+  }
+
+  /* --- Passos "como funciona" --- */
+  .steps {
+    padding: 0 24px 8px;
+    animation: fadeUp 0.5s ease 0.8s both;
+  }
+  .steps h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #0D0D1B;
+  }
+  .step-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 20px;
+  }
+  .step-item:last-child { padding-bottom: 0; }
+  .step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 36px;
+    bottom: 0;
+    width: 2px;
+    background: #E8EAF0;
+  }
+  .step-number {
+    width: 36px; height: 36px; min-width: 36px;
+    border-radius: 50%;
+    background: #EBF6FD;
+    color: #009EE3;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  .step-content h3 {
+    font-size: 14px; font-weight: 600; color: #0D0D1B; line-height: 1.4;
+  }
+  .step-content p {
+    font-size: 12px; color: #6B7190; line-height: 1.5; margin-top: 2px;
+  }
+
+  /* --- CTAs --- */
+  .cta-section {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeUp 0.5s ease 1s both;
+  }
+  .btn-loud {
+    width: 100%; height: 48px;
+    background: #434CE4; color: #FFFFFF;
+    border: none; border-radius: 12px;
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-loud:hover { background: #353AC5; }
+  .btn-loud:active { background: #272C96; transform: scale(0.98); }
+
+  .btn-quiet {
+    width: 100%; height: 48px;
+    background: #1B2755; color: #FFFFFF;
+    border: none; border-radius: 12px;
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-quiet:hover { background: #293979; }
+  .btn-quiet:active { background: #384C9D; }
+
+  .reassurance {
+    text-align: center;
+    font-size: 12px;
+    color: #9BA0B8;
+    padding: 0 24px 32px;
+    line-height: 1.5;
+  }
+  .reassurance svg {
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="device-frame">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <button class="back-btn" aria-label="Voltar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D0D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <span class="tag">Prévia interativa</span>
+    <h1>Veja como seria receber um pagamento</h1>
+    <p>Simulamos uma venda de R$ 150 para você ver na prática</p>
+  </section>
+
+  <!-- Simulação de pagamento -->
+  <div class="simulation" role="img" aria-label="Simulação de recebimento de pagamento">
+    <div class="sim-header">
+      <span>Simulação</span>
+      <div class="sim-live-dot" aria-hidden="true"></div>
+    </div>
+
+    <div class="sim-phone">
+      <div class="sim-phone-header">
+        <div class="notif-label">Mercado Pago</div>
+        <div class="notif-title">Você recebeu um pagamento!</div>
+      </div>
+      <div class="sim-payment">
+        <div class="sim-amount">+ R$ 150,00</div>
+        <div class="sim-amount-label">Caiu na sua conta agora</div>
+      </div>
+      <div class="sim-receipt">
+        <div class="sim-receipt-row">
+          <span class="label">Valor da venda</span>
+          <span class="value">R$ 150,00</span>
+        </div>
+        <div class="sim-receipt-row">
+          <span class="label">Taxa</span>
+          <span class="value">- R$ 5,69</span>
+        </div>
+        <div class="sim-divider"></div>
+        <div class="sim-receipt-row">
+          <span class="label">Você recebe</span>
+          <span class="value green">R$ 144,31</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Passos -->
+  <section class="steps">
+    <h2>Como funciona</h2>
+    <div class="step-item">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Crie um link de pagamento</h3>
+        <p>Direto pelo app, em segundos</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Compartilhe com seu cliente</h3>
+        <p>Por WhatsApp, redes sociais ou QR</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Receba na hora</h3>
+        <p>O dinheiro cai na sua conta na hora</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTAs -->
+  <footer class="cta-section">
+    <button class="btn-loud" aria-label="Ativar vendas na conta">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Quero vender assim
+    </button>
+    <button class="btn-quiet" aria-label="Continuar sem vender">
+      Agora não, só quero usar a conta
+    </button>
+  </footer>
+
+  <p class="reassurance">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9BA0B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+    Sem compromisso. Ative ou desative quando quiser.
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variação A/B — Proposta B (Versão Compacta com Social Proof)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #F4F5F9;
+    color: #0D0D1B;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .device-frame {
+    width: 375px;
+    min-height: 100vh;
+    background: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Navbar */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+  }
+  .back-btn {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; cursor: pointer;
+    border-radius: 12px; transition: background 0.2s;
+  }
+  .back-btn:hover { background: #F4F5F9; }
+
+  /* Hero com Social Proof */
+  .hero {
+    padding: 24px 24px 0;
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero h1 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 14px;
+    color: #6B7190;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  /* Social proof inline */
+  .social-proof {
+    margin: 20px 24px 0;
+    padding: 12px 16px;
+    background: #F8F9FC;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.4s ease 0.4s both;
+  }
+  .avatars-stack {
+    display: flex;
+    margin-right: -4px;
+  }
+  .sp-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff;
+    margin-left: -8px;
+  }
+  .sp-avatar:first-child { margin-left: 0; }
+  .sp-avatar.a1 { background: #434CE4; z-index: 3; }
+  .sp-avatar.a2 { background: #009EE3; z-index: 2; }
+  .sp-avatar.a3 { background: #00A650; z-index: 1; }
+  .social-proof-text {
+    font-size: 12px;
+    color: #6B7190;
+    line-height: 1.4;
+  }
+  .social-proof-text strong {
+    color: #0D0D1B;
+    font-weight: 600;
+  }
+
+  /* Simulação compacta — Mini recibo */
+  .mini-sim {
+    margin: 20px 24px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1.5px solid #E8EAF0;
+    animation: fadeUp 0.5s ease 0.5s both;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .mini-sim:hover {
+    border-color: #009EE3;
+    box-shadow: 0 4px 16px rgba(0,158,227,0.1);
+  }
+
+  .mini-sim-header {
+    background: linear-gradient(135deg, #009EE3, #434CE4);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .mini-sim-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mini-notif-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mini-sim-header-text {
+    color: white;
+  }
+  .mini-sim-header-text .msh-label {
+    font-size: 10px;
+    opacity: 0.7;
+    font-weight: 500;
+  }
+  .mini-sim-header-text .msh-title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .mini-sim-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    animation: amountPulse 0.5s ease 1s both;
+  }
+  @keyframes amountPulse {
+    from { opacity: 0; transform: scale(0.8); }
+    60% { transform: scale(1.05); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .mini-sim-body {
+    padding: 16px 20px;
+    background: #FAFBFE;
+  }
+  .mini-sim-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .mini-sim-row + .mini-sim-row { margin-top: 6px; }
+  .mini-sim-row .l { color: #6B7190; }
+  .mini-sim-row .v { font-weight: 600; color: #0D0D1B; }
+  .mini-sim-row .v.green { color: #00A650; }
+
+  .mini-sim-footer {
+    padding: 12px 20px;
+    background: #F4F5F9;
+    text-align: center;
+    font-size: 11px;
+    color: #9BA0B8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  /* Benefícios rápidos (sem steps) */
+  .benefits {
+    padding: 0 24px;
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.4s ease 0.7s both;
+  }
+  .benefit-pill {
+    flex: 1;
+    padding: 12px;
+    border-radius: 14px;
+    background: #F8F9FC;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .benefit-pill:hover { background: #F0EBFD; }
+  .benefit-emoji {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+  .benefit-pill h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0D0D1B;
+    line-height: 1.3;
+  }
+  .benefit-pill p {
+    font-size: 10px;
+    color: #6B7190;
+    margin-top: 2px;
+  }
+
+  /* CTAs */
+  .cta-section {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeUp 0.5s ease 0.9s both;
+  }
+  .btn-loud {
+    width: 100%; height: 48px;
+    background: #434CE4; color: #FFFFFF;
+    border: none; border-radius: 12px;
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-loud:hover { background: #353AC5; }
+  .btn-loud:active { background: #272C96; transform: scale(0.98); }
+
+  .btn-quiet {
+    width: 100%; height: 48px;
+    background: #1B2755; color: #FFFFFF;
+    border: none; border-radius: 12px;
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-quiet:hover { background: #293979; }
+  .btn-quiet:active { background: #384C9D; }
+
+  .reassurance {
+    text-align: center;
+    font-size: 12px;
+    color: #9BA0B8;
+    padding: 0 24px 32px;
+    line-height: 1.5;
+  }
+
+  /* --- Label de variação (debug) --- */
+  .variant-label {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    background: #FF5252;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    z-index: 999;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="variant-label">VARIANTE B</div>
+
+<div class="device-frame">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <button class="back-btn" aria-label="Voltar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D0D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Veja como seria receber um pagamento</h1>
+    <p>Milhares de pessoas já vendem pelo Mercado Pago</p>
+  </section>
+
+  <!-- Social Proof -->
+  <div class="social-proof" aria-label="Prova social">
+    <div class="avatars-stack">
+      <div class="sp-avatar a1">A</div>
+      <div class="sp-avatar a2">R</div>
+      <div class="sp-avatar a3">J</div>
+    </div>
+    <div class="social-proof-text">
+      <strong>+12 mil pessoas</strong> ativaram vendas essa semana
+    </div>
+  </div>
+
+  <!-- Mini simulação (mais compacta que Proposta B original) -->
+  <div class="mini-sim" role="img" aria-label="Simulação de pagamento recebido">
+    <div class="mini-sim-header">
+      <div class="mini-sim-header-left">
+        <div class="mini-notif-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="mini-sim-header-text">
+          <div class="msh-label">Simulação</div>
+          <div class="msh-title">Pagamento recebido!</div>
+        </div>
+      </div>
+      <div class="mini-sim-amount">+R$150</div>
+    </div>
+    <div class="mini-sim-body">
+      <div class="mini-sim-row">
+        <span class="l">Venda</span>
+        <span class="v">R$ 150,00</span>
+      </div>
+      <div class="mini-sim-row">
+        <span class="l">Taxa (3,79%)</span>
+        <span class="v">-R$ 5,69</span>
+      </div>
+      <div class="mini-sim-row">
+        <span class="l">Você recebe</span>
+        <span class="v green">R$ 144,31</span>
+      </div>
+    </div>
+    <div class="mini-sim-footer">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9BA0B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Dinheiro cai na hora na sua conta
+    </div>
+  </div>
+
+  <!-- Benefícios compactos -->
+  <div class="benefits" aria-label="Benefícios de vender">
+    <div class="benefit-pill">
+      <div class="benefit-emoji" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#434CE4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <h3>Link de pgto</h3>
+      <p>Envie por WhatsApp</p>
+    </div>
+    <div class="benefit-pill">
+      <div class="benefit-emoji" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      </div>
+      <h3>Maquininha</h3>
+      <p>NFC pelo celular</p>
+    </div>
+    <div class="benefit-pill">
+      <div class="benefit-emoji" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00A650" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <h3>Cartão crédito</h3>
+      <p>Aceite de clientes</p>
+    </div>
+  </div>
+
+  <!-- CTAs -->
+  <footer class="cta-section">
+    <button class="btn-loud" aria-label="Ativar vendas">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Quero vender assim
+    </button>
+    <button class="btn-quiet" aria-label="Continuar sem vender">
+      Agora não, só quero usar a conta
+    </button>
+  </footer>
+
+  <p class="reassurance">Sem compromisso. Ative ou desative quando quiser.</p>
+</div>
+
+</body>
+</html>
