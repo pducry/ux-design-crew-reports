@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Variacao D — Celebracao Pura + Deferred Nudge</title>
+<!--
+  VARIACAO D: Celebracao pura + Nudge deferido
+  ==============================================
+  Conceito: Tela de sucesso SEM NENHUMA mencao a vendas/recebimentos.
+  100% celebracao. A oferta aparece DEPOIS, em momentos contextuais:
+  - Card no home feed (mockup 1)
+  - In-app message apos primeiro Pix recebido (mockup 2)
+
+  Este arquivo contem 2 telas:
+  1. A tela de sucesso real (que o usuario veria no onboarding)
+  2. Mockups dos nudges deferidos (como apareceriam depois)
+
+  Racional de negocio:
+  - Resolve o problema central de TIMING identificado pelo Estrategista
+  - Onboarding limpo = maior NPS e retencao de 7 dias
+  - Nudge pos-Pix e altamente contextual (usuario ja recebeu dinheiro)
+  - Card no home e passivo, nao interrompe
+  - Conversao pode ser menor imediata, mas LTV tende a ser maior
+    (usuarios que ativam por conta propria tem maior engajamento)
+
+  Trade-offs:
+  + Zero friccao no onboarding - experiencia de sucesso pura
+  + Maior satisfacao imediata com a marca
+  + Nudge contextual pos-Pix tem alta relevancia
+  - Conversao imediata na bifurcadora = 0% (nao existe bifurcadora)
+  - Depende de infra de notificacao/card feed
+  - Janela de oportunidade pode ser perdida se nudge nao for visto
+
+  Checklist Andes X:
+  [x] CTA Loud: fundo #009EE3 (azul accent MP)
+  [x] Botoes: 48px altura, radius 24px (pill)
+  [x] Tipografia: Inter, escalas corretas
+  [x] Spacing: escala 4/8/12/16/20/24/32/40
+  [x] Cards: radius 12px
+  [x] Touch targets: minimo 48dp
+  [x] Home feed card: segue padrao MP
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent-ui: #009EE3;
+    --accent-ui-hover: #0087C7;
+    --accent-ui-active: #0070A8;
+    --accent-loud: #434CE4;
+    --accent-quiet: #1B2755;
+    --positive: #00A650;
+    --positive-bg: #E6F7ED;
+    --text-primary: #0D0D1B;
+    --text-secondary: #6B6B7B;
+    --text-on-fill: #FFFFFF;
+    --surface: #F4F5F9;
+    --background: #FFFFFF;
+    --gray-10: #F4F5F9;
+    --gray-20: #E7E8ED;
+    --brand-yellow: #FFE600;
+    --radius-sm: 8px;
+    --radius-button: 24px;
+    --radius-card: 12px;
+    --radius-sheet: 20px;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: #F0F1F5;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 0 0 40px;
+  }
+
+  /* ========== SCREEN LABEL ========== */
+  .screen-label {
+    width: 100%;
+    max-width: 360px;
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-on-fill);
+    text-align: center;
+  }
+
+  .screen-label.success-label { background: var(--positive); }
+  .screen-label.nudge-label { background: var(--accent-ui); }
+
+  .device-frame {
+    width: 100%;
+    max-width: 360px;
+    background: var(--background);
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  /* ===================================================
+     TELA 1: CELEBRACAO PURA (onboarding)
+     =================================================== */
+
+  .success-frame {
+    display: flex;
+    flex-direction: column;
+    min-height: 640px;
+  }
+
+  .navbar {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+  }
+
+  .navbar-back {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .navbar-back svg { width: 20px; height: 20px; fill: var(--text-primary); }
+
+  .success-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px 24px;
+    text-align: center;
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulseRing {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.2; }
+  }
+
+  @keyframes confettiBurst {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-60px) rotate(220deg); opacity: 0; }
+  }
+
+  .success-badge {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    background: var(--positive-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    position: relative;
+  }
+
+  .success-badge::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 2px solid var(--positive-bg);
+    animation: pulseRing 2s ease-in-out infinite;
+  }
+
+  .success-badge svg {
+    width: 52px;
+    height: 52px;
+    fill: var(--positive);
+  }
+
+  .confetti-bit {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: confettiBurst 1.3s ease-out forwards;
+  }
+  .confetti-bit:nth-child(2) { background: var(--brand-yellow); top: -8px; left: 20px; animation-delay: 0.35s; }
+  .confetti-bit:nth-child(3) { background: var(--accent-ui); top: 0; right: 10px; animation-delay: 0.45s; }
+  .confetti-bit:nth-child(4) { background: var(--positive); bottom: 10px; left: 0; animation-delay: 0.5s; }
+  .confetti-bit:nth-child(5) { background: #FF6B6B; bottom: 4px; right: 8px; animation-delay: 0.6s; }
+  .confetti-bit:nth-child(6) { background: var(--accent-loud); top: 20px; left: -8px; animation-delay: 0.7s; }
+
+  .success-content h1 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    animation: fadeUp 0.5s ease-out 0.5s both;
+  }
+
+  .success-content .sub {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: var(--text-secondary);
+    max-width: 280px;
+    animation: fadeUp 0.5s ease-out 0.6s both;
+  }
+
+  /* Feature pills */
+  .feature-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 40px;
+    animation: fadeUp 0.5s ease-out 0.7s both;
+  }
+
+  .feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .feature-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-card);
+    background: var(--gray-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-circle svg { width: 24px; height: 24px; fill: var(--text-primary); }
+
+  .feature-item span {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  /* Bottom CTA */
+  .success-cta {
+    padding: 16px 16px 32px;
+    animation: fadeUp 0.5s ease-out 0.85s both;
+  }
+
+  .btn-loud {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-button);
+    background: var(--accent-ui);
+    color: var(--text-on-fill);
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-loud:hover { background: var(--accent-ui-hover); }
+  .btn-loud:active { background: var(--accent-ui-active); transform: scale(0.98); }
+
+  /* ===================================================
+     TELA 2: HOME FEED COM CARD NUDGE (deferido)
+     =================================================== */
+
+  .home-frame {
+    min-height: 640px;
+  }
+
+  .home-header {
+    background: var(--accent-ui);
+    padding: 16px 20px 24px;
+    color: white;
+  }
+
+  .home-greeting {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    opacity: 0.8;
+  }
+
+  .home-name {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+  }
+
+  .home-balance-section {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .home-balance-label {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    opacity: 0.7;
+  }
+
+  .home-balance-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 36px;
+    letter-spacing: -0.5px;
+  }
+
+  .home-eye {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .home-eye svg { width: 20px; height: 20px; fill: white; }
+
+  /* Quick actions */
+  .home-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 16px;
+    background: var(--background);
+    margin-top: -12px;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
+
+  .home-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font);
+    min-width: 56px;
+    min-height: 48px;
+  }
+
+  .home-action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--gray-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .home-action-icon svg { width: 20px; height: 20px; fill: var(--text-primary); }
+
+  .home-action span {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* Nudge card in feed */
+  .nudge-card {
+    margin: 8px 16px 16px;
+    padding: 16px;
+    background: var(--background);
+    border: 1.5px solid var(--gray-20);
+    border-radius: var(--radius-card);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    min-height: 48px;
+  }
+
+  .nudge-card:hover {
+    border-color: var(--accent-ui);
+    box-shadow: 0 0 0 1px var(--accent-ui);
+  }
+
+  .nudge-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--accent-ui);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .nudge-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-card);
+    background: #E8F4FD;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+
+  .nudge-card-icon svg { width: 22px; height: 22px; fill: var(--accent-ui); }
+
+  .nudge-card-text { flex: 1; }
+
+  .nudge-card-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--text-primary);
+  }
+
+  .nudge-card-text span {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  .nudge-card-dismiss {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .nudge-card-dismiss svg { width: 16px; height: 16px; fill: var(--text-secondary); }
+
+  .nudge-card-arrow {
+    flex-shrink: 0;
+  }
+
+  .nudge-card-arrow svg { width: 20px; height: 20px; fill: var(--text-secondary); }
+
+  /* Feed separator */
+  .feed-divider {
+    height: 8px;
+    background: var(--gray-10);
+  }
+
+  /* Generic feed item placeholder */
+  .feed-item {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--gray-10);
+  }
+
+  .feed-item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gray-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .feed-item-icon svg { width: 20px; height: 20px; fill: var(--text-secondary); }
+
+  .feed-item-text { flex: 1; }
+
+  .feed-item-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--text-primary);
+  }
+
+  .feed-item-text span {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  .feed-item-amount {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+
+  .feed-item-amount.incoming { color: var(--positive); }
+
+  /* ===================================================
+     TELA 3: IN-APP MESSAGE POS PIX
+     =================================================== */
+
+  .pix-frame {
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pix-success-header {
+    background: var(--positive);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+  }
+
+  .pix-success-header svg { width: 24px; height: 24px; fill: white; }
+
+  .pix-success-header span {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+  }
+
+  .pix-detail {
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .pix-amount {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .pix-from {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+
+  .pix-time {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  /* In-app message card */
+  .iam-card {
+    margin: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, #E8F4FD 0%, #F0F1FF 100%);
+    border-radius: var(--radius-card);
+    position: relative;
+  }
+
+  .iam-dismiss {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .iam-dismiss svg { width: 16px; height: 16px; fill: var(--text-secondary); }
+
+  .iam-emoji {
+    font-size: 32px;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .iam-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 22px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    padding-right: 32px;
+  }
+
+  .iam-card p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .iam-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    border-radius: var(--radius-button);
+    background: var(--accent-ui);
+    color: white;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .iam-cta:hover { background: var(--accent-ui-hover); }
+
+  .iam-later {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 16px;
+    border: none;
+    border-radius: var(--radius-button);
+    background: transparent;
+    color: var(--accent-ui);
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 4px;
+  }
+
+  /* Pix content filler */
+  .pix-actions-row {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--gray-10);
+    margin-top: auto;
+  }
+
+  .pix-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font);
+    min-height: 48px;
+  }
+
+  .pix-action-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-card);
+    background: var(--gray-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pix-action-icon svg { width: 20px; height: 20px; fill: var(--text-primary); }
+
+  .pix-action-btn span {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  /* Section divider in page */
+  .section-break {
+    width: 100%;
+    max-width: 360px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-break::before,
+  .section-break::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-20);
+  }
+
+  .section-break span {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== TELA 1: CELEBRACAO PURA ===== -->
+<div class="screen-label success-label">Tela 1 — Onboarding: sucesso (sem mencao a vendas)</div>
+<div class="device-frame">
+  <div class="success-frame">
+    <nav class="navbar">
+      <button class="navbar-back" aria-label="Voltar">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
+    </nav>
+
+    <section class="success-content" aria-label="Conta criada com sucesso">
+      <div class="success-badge" role="img" aria-label="Sucesso">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        <span class="confetti-bit"></span>
+        <span class="confetti-bit"></span>
+        <span class="confetti-bit"></span>
+        <span class="confetti-bit"></span>
+        <span class="confetti-bit"></span>
+      </div>
+      <h1>Sua conta esta pronta!</h1>
+      <p class="sub">Agora voce pode pagar, transferir, investir e muito mais com o Mercado Pago.</p>
+
+      <div class="feature-row">
+        <div class="feature-item">
+          <div class="feature-circle">
+            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+          </div>
+          <span>Pagar</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-circle">
+            <svg viewBox="0 0 24 24"><path d="M12.5 6.9c1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-.53.12-1.03.3-1.48.54l1.47 1.47c.41-.17.91-.27 1.51-.27zM5.33 4.06L4.06 5.33 7.5 8.77c0 2.08 1.56 3.21 3.91 3.91l3.51 3.51c-.34.48-1.05.91-2.42.91-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c.96-.18 1.83-.55 2.46-1.12l2.22 2.22 1.27-1.27L5.33 4.06z"/></svg>
+          </div>
+          <span>Transferir</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-circle">
+            <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+          </div>
+          <span>Investir</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-circle">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+          </div>
+          <span>Cartao</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="success-cta">
+      <button class="btn-loud" aria-label="Comecar a usar">Comecar a usar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SEPARADOR ===== -->
+<div class="section-break">
+  <span>Nudge deferido 1 — Card no home feed</span>
+</div>
+
+<!-- ===== TELA 2: HOME FEED COM NUDGE CARD ===== -->
+<div class="screen-label nudge-label">Tela 2 — Home: card contextual (24-72h depois)</div>
+<div class="device-frame">
+  <div class="home-frame">
+    <div class="home-header">
+      <div class="home-greeting">Boa tarde,</div>
+      <div class="home-name">Maria</div>
+      <div class="home-balance-section">
+        <div>
+          <div class="home-balance-label">Saldo disponivel</div>
+          <div class="home-balance-value">R$ 142,50</div>
+        </div>
+        <button class="home-eye" aria-label="Ocultar saldo">
+          <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="home-actions">
+      <button class="home-action">
+        <div class="home-action-icon">
+          <svg viewBox="0 0 24 24"><path d="M12.5 6.9c1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-.53.12-1.03.3-1.48.54l1.47 1.47c.41-.17.91-.27 1.51-.27zM5.33 4.06L4.06 5.33 7.5 8.77c0 2.08 1.56 3.21 3.91 3.91l3.51 3.51c-.34.48-1.05.91-2.42.91-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c.96-.18 1.83-.55 2.46-1.12l2.22 2.22 1.27-1.27L5.33 4.06z"/></svg>
+        </div>
+        <span>Transferir</span>
+      </button>
+      <button class="home-action">
+        <div class="home-action-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+        </div>
+        <span>Pagar</span>
+      </button>
+      <button class="home-action">
+        <div class="home-action-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-7-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/></svg>
+        </div>
+        <span>Recarregar</span>
+      </button>
+      <button class="home-action">
+        <div class="home-action-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        </div>
+        <span>Mais</span>
+      </button>
+    </div>
+
+    <!-- Nudge card -->
+    <div class="nudge-card" role="button" tabindex="0" aria-label="Saiba como receber pagamentos">
+      <div class="nudge-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      </div>
+      <div class="nudge-card-text">
+        <strong>Sabia que voce pode cobrar pelo app?</strong>
+        <span>Crie links de pagamento e receba por Pix, cartao ou boleto. Gratis.</span>
+      </div>
+      <div class="nudge-card-arrow">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+      </div>
+    </div>
+
+    <div class="feed-divider"></div>
+
+    <!-- Feed items placeholder -->
+    <div class="feed-item">
+      <div class="feed-item-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </div>
+      <div class="feed-item-text">
+        <strong>Pix recebido</strong>
+        <span>Joao Silva - Ontem</span>
+      </div>
+      <div class="feed-item-amount incoming">+ R$ 50,00</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-item-icon">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+      </div>
+      <div class="feed-item-text">
+        <strong>Pagamento de conta</strong>
+        <span>CPFL Energia - 20/03</span>
+      </div>
+      <div class="feed-item-amount">- R$ 187,32</div>
+    </div>
+    <div class="feed-item">
+      <div class="feed-item-icon">
+        <svg viewBox="0 0 24 24"><path d="M12.5 6.9c1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-.53.12-1.03.3-1.48.54l1.47 1.47c.41-.17.91-.27 1.51-.27zM5.33 4.06L4.06 5.33 7.5 8.77c0 2.08 1.56 3.21 3.91 3.91l3.51 3.51c-.34.48-1.05.91-2.42.91-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c.96-.18 1.83-.55 2.46-1.12l2.22 2.22 1.27-1.27L5.33 4.06z"/></svg>
+      </div>
+      <div class="feed-item-text">
+        <strong>Transferencia enviada</strong>
+        <span>Ana Souza - 19/03</span>
+      </div>
+      <div class="feed-item-amount">- R$ 75,00</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SEPARADOR ===== -->
+<div class="section-break">
+  <span>Nudge deferido 2 — In-app message pos Pix recebido</span>
+</div>
+
+<!-- ===== TELA 3: IN-APP MESSAGE POS PIX ===== -->
+<div class="screen-label nudge-label">Tela 3 — Pos-Pix: in-app message contextual</div>
+<div class="device-frame">
+  <div class="pix-frame">
+    <div class="pix-success-header">
+      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      <span>Pix recebido</span>
+    </div>
+
+    <div class="pix-detail">
+      <div class="pix-amount">R$ 150,00</div>
+      <div class="pix-from">de Carlos Oliveira</div>
+      <div class="pix-time">Hoje, 14:32</div>
+    </div>
+
+    <!-- In-app message contextual -->
+    <div class="iam-card">
+      <button class="iam-dismiss" aria-label="Fechar">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <div class="iam-emoji" role="img" aria-label="dinheiro">&#128176;</div>
+      <h3>Voce recebeu um Pix!</h3>
+      <p>Quer facilitar na proxima? Crie um link de cobranca e receba de qualquer pessoa por Pix, cartao ou boleto.</p>
+      <button class="iam-cta">Criar link de cobranca</button>
+      <button class="iam-later">Depois</button>
+    </div>
+
+    <div class="pix-actions-row">
+      <button class="pix-action-btn">
+        <div class="pix-action-icon">
+          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        </div>
+        <span>Comprovante</span>
+      </button>
+      <button class="pix-action-btn">
+        <div class="pix-action-icon">
+          <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+        </div>
+        <span>Compartilhar</span>
+      </button>
+      <button class="pix-action-btn">
+        <div class="pix-action-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </div>
+        <span>Detalhes</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

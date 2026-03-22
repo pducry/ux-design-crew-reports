@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Variacao A — Celebracao + Bottom Sheet Sutil</title>
+<!--
+  VARIACAO A: Fusao de A+C originais
+  ===================================
+  Conceito: Tela de sucesso celebratoria com bottom sheet on-demand.
+  A celebracao e o momento principal. Um nudge discreto na barra inferior
+  abre um bottom sheet com detalhes da oferta. O usuario decide se quer
+  explorar ou seguir direto para o app.
+
+  Racional de negocio:
+  - Prioriza o momento emocional positivo (conta criada)
+  - Reduz pressao de venda no momento de conclusao
+  - Bottom sheet sob demanda respeita a autonomia do usuario
+  - Quem tem interesse clica; quem nao tem, segue sem friccao
+
+  Trade-offs:
+  + Menor rejeicao por pressao de venda no onboarding
+  + Celebracao reforca sentimento positivo com a marca
+  - Menor taxa de conversao imediata (nudge e opcional)
+  - Depende do usuario notar e clicar no nudge
+
+  Checklist Andes X:
+  [x] CTA Loud: fundo #009EE3 (azul accent MP)
+  [x] Botoes: 48px altura, radius 24px (pill)
+  [x] Tipografia: Inter, escalas corretas
+  [x] Spacing: escala 4/8/12/16/20/24/32/40
+  [x] Cards: radius 12px
+  [x] Touch targets: minimo 48dp
+  [x] Navbar glass: rgba + blur(16px)
+  [x] Bottom sheet: radius 20px top
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent-ui: #009EE3;
+    --accent-ui-hover: #0087C7;
+    --accent-ui-active: #0070A8;
+    --accent-loud: #434CE4;
+    --accent-quiet: #1B2755;
+    --positive: #00A650;
+    --positive-bg: #E6F7ED;
+    --text-primary: #0D0D1B;
+    --text-secondary: #6B6B7B;
+    --text-on-fill: #FFFFFF;
+    --surface: #F4F5F9;
+    --background: #FFFFFF;
+    --gray-10: #F4F5F9;
+    --gray-20: #E7E8ED;
+    --brand-yellow: #FFE600;
+    --shadow-sheet: 0 -4px 24px rgba(0,0,0,0.12);
+    --radius-sm: 8px;
+    --radius-button: 24px;
+    --radius-card: 12px;
+    --radius-sheet: 20px;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: #F0F1F5;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .device-frame {
+    width: 100%;
+    max-width: 360px;
+    min-height: 100vh;
+    background: var(--background);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ========== NAVBAR GLASS ========== */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+  }
+
+  .navbar-back {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .navbar-back:hover { background: var(--gray-10); }
+  .navbar-back svg { width: 20px; height: 20px; fill: var(--text-primary); }
+
+  .navbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    color: var(--text-primary);
+  }
+
+  /* ========== SUCCESS SCREEN ========== */
+  .success-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px 140px;
+    text-align: center;
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulseRing {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.08); opacity: 0.3; }
+  }
+
+  @keyframes confettiDrop {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-50px) rotate(200deg); opacity: 0; }
+  }
+
+  .success-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--positive-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    position: relative;
+  }
+
+  .success-icon::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 2px solid var(--positive-bg);
+    animation: pulseRing 2s ease-in-out infinite;
+  }
+
+  .success-icon svg {
+    width: 48px;
+    height: 48px;
+    fill: var(--positive);
+  }
+
+  /* Confetti particles */
+  .confetti-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: confettiDrop 1.2s ease-out forwards;
+  }
+  .confetti-particle:nth-child(2) { background: var(--brand-yellow); top: -6px; left: 16px; animation-delay: 0.4s; }
+  .confetti-particle:nth-child(3) { background: var(--accent-ui); top: 4px; right: 8px; animation-delay: 0.5s; }
+  .confetti-particle:nth-child(4) { background: var(--positive); bottom: 8px; left: 4px; animation-delay: 0.55s; }
+  .confetti-particle:nth-child(5) { background: var(--accent-loud); bottom: 0; right: 12px; animation-delay: 0.65s; }
+
+  .success-screen h1 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    animation: fadeUp 0.5s ease-out 0.45s both;
+  }
+
+  .success-screen .subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: var(--text-secondary);
+    max-width: 280px;
+    animation: fadeUp 0.5s ease-out 0.55s both;
+  }
+
+  /* Quick features row */
+  .quick-features {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+    animation: fadeUp 0.5s ease-out 0.65s both;
+  }
+
+  .quick-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .quick-feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-card);
+    background: var(--gray-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quick-feature-icon svg { width: 24px; height: 24px; fill: var(--text-primary); }
+
+  .quick-feature span {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  /* ========== BOTTOM BAR ========== */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 360px;
+    background: var(--background);
+    border-top: 1px solid var(--gray-20);
+    padding: 12px 16px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: fadeUp 0.5s ease-out 0.8s both;
+    z-index: 50;
+  }
+
+  /* Nudge banner */
+  .nudge-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--gray-10);
+    border-radius: var(--radius-card);
+    cursor: pointer;
+    transition: background 0.15s;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font);
+    min-height: 48px;
+  }
+
+  .nudge-banner:hover { background: #EAEBF0; }
+  .nudge-banner:active { background: var(--gray-20); }
+
+  .nudge-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--accent-ui);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .nudge-icon svg { width: 20px; height: 20px; fill: white; }
+
+  .nudge-text { flex: 1; }
+
+  .nudge-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--text-primary);
+  }
+
+  .nudge-text span {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  .nudge-arrow {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .nudge-arrow svg { width: 20px; height: 20px; fill: var(--text-secondary); }
+
+  /* Main CTA */
+  .btn-primary {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-button);
+    background: var(--accent-quiet);
+    color: var(--text-on-fill);
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-primary:hover { background: #141E45; }
+  .btn-primary:active { background: #0F1736; transform: scale(0.98); }
+
+  /* ========== OVERLAY + BOTTOM SHEET ========== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+  }
+
+  .overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 100%;
+    max-width: 360px;
+    background: var(--background);
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    z-index: 300;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .bottom-sheet.active {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--gray-20);
+    border-radius: 2px;
+    margin: 12px auto 0;
+  }
+
+  .sheet-header {
+    padding: 20px 20px 0;
+  }
+
+  .sheet-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 28px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .sheet-header p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text-secondary);
+  }
+
+  .sheet-body {
+    padding: 20px;
+  }
+
+  .sheet-benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-10);
+  }
+
+  .sheet-benefit:last-child { border-bottom: none; }
+
+  .sheet-benefit-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-card);
+    background: var(--gray-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sheet-benefit-icon svg { width: 22px; height: 22px; fill: var(--accent-ui); }
+
+  .sheet-benefit-text h3 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .sheet-benefit-text p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text-secondary);
+  }
+
+  .sheet-reversibility {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--positive-bg);
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+  }
+
+  .sheet-reversibility svg { width: 16px; height: 16px; fill: var(--positive); flex-shrink: 0; }
+
+  .sheet-reversibility span {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--text-primary);
+  }
+
+  .sheet-actions {
+    padding: 16px 20px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-loud {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-button);
+    background: var(--accent-ui);
+    color: var(--text-on-fill);
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-loud:hover { background: var(--accent-ui-hover); }
+  .btn-loud:active { background: var(--accent-ui-active); transform: scale(0.98); }
+
+  .btn-mute {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-button);
+    background: transparent;
+    color: var(--accent-ui);
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-mute:hover { background: var(--gray-10); }
+  .btn-mute:active { background: var(--gray-20); }
+</style>
+</head>
+<body>
+
+<div class="device-frame" role="main">
+
+  <!-- Navbar -->
+  <nav class="navbar" role="navigation" aria-label="Navegacao principal">
+    <button class="navbar-back" aria-label="Voltar">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </button>
+    <span class="navbar-title">Sua conta</span>
+  </nav>
+
+  <!-- Success screen - celebracao e o foco -->
+  <section class="success-screen" aria-label="Conta criada com sucesso">
+    <div class="success-icon" role="img" aria-label="Sucesso">
+      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      <span class="confetti-particle"></span>
+      <span class="confetti-particle"></span>
+      <span class="confetti-particle"></span>
+      <span class="confetti-particle"></span>
+    </div>
+    <h1>Conta criada com sucesso!</h1>
+    <p class="subtitle">Tudo pronto. Agora voce pode pagar, transferir e muito mais.</p>
+
+    <div class="quick-features">
+      <div class="quick-feature">
+        <div class="quick-feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+        </div>
+        <span>Pagar</span>
+      </div>
+      <div class="quick-feature">
+        <div class="quick-feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12.5 6.9c1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-.53.12-1.03.3-1.48.54l1.47 1.47c.41-.17.91-.27 1.51-.27zM5.33 4.06L4.06 5.33 7.5 8.77c0 2.08 1.56 3.21 3.91 3.91l3.51 3.51c-.34.48-1.05.91-2.42.91-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c.96-.18 1.83-.55 2.46-1.12l2.22 2.22 1.27-1.27L5.33 4.06z"/></svg>
+        </div>
+        <span>Transferir</span>
+      </div>
+      <div class="quick-feature">
+        <div class="quick-feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        </div>
+        <span>Investir</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom bar: nudge + CTA principal -->
+  <div class="bottom-bar">
+    <button class="nudge-banner" onclick="openSheet()" aria-label="Saiba mais sobre receber pagamentos" aria-haspopup="dialog">
+      <div class="nudge-icon">
+        <svg viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3z"/></svg>
+      </div>
+      <div class="nudge-text">
+        <strong>Quer receber pagamentos tambem?</strong>
+        <span>Ative gratis, sem CNPJ</span>
+      </div>
+      <div class="nudge-arrow">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+      </div>
+    </button>
+    <button class="btn-primary" aria-label="Ir para o app">Ir para o app</button>
+  </div>
+
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeSheet()" aria-hidden="true"></div>
+
+<!-- Bottom Sheet -->
+<div class="bottom-sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Receber pagamentos">
+  <div class="sheet-handle"></div>
+
+  <div class="sheet-header">
+    <h2>Receba pagamentos pelo app</h2>
+    <p>Ative as ferramentas para cobrar e receber pagamentos de qualquer pessoa, sem precisar de CNPJ.</p>
+  </div>
+
+  <div class="sheet-body">
+    <div class="sheet-benefit">
+      <div class="sheet-benefit-icon">
+        <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+      </div>
+      <div class="sheet-benefit-text">
+        <h3>Links de pagamento</h3>
+        <p>Crie um link, compartilhe no WhatsApp e receba na hora.</p>
+      </div>
+    </div>
+
+    <div class="sheet-benefit">
+      <div class="sheet-benefit-icon">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+      </div>
+      <div class="sheet-benefit-text">
+        <h3>Pix, cartao e boleto</h3>
+        <p>Quem te paga escolhe o meio que preferir.</p>
+      </div>
+    </div>
+
+    <div class="sheet-benefit">
+      <div class="sheet-benefit-icon">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      </div>
+      <div class="sheet-benefit-text">
+        <h3>Acompanhe tudo</h3>
+        <p>Veja o que entrou, quando e de quem no painel.</p>
+      </div>
+    </div>
+
+    <div class="sheet-benefit">
+      <div class="sheet-benefit-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.85c0 1.89-1.44 2.96-3.12 3.19z"/></svg>
+      </div>
+      <div class="sheet-benefit-text">
+        <h3>Gratis para comecar</h3>
+        <p>Sem mensalidade. So paga taxa quando recebe.</p>
+      </div>
+    </div>
+
+    <div class="sheet-reversibility">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+      <span>Reversivel a qualquer momento em Configuracoes > Perfil</span>
+    </div>
+  </div>
+
+  <div class="sheet-actions">
+    <button class="btn-loud" aria-label="Ativar e receber pagamentos" onclick="closeSheet()">Ativar e receber pagamentos</button>
+    <button class="btn-mute" aria-label="Agora nao" onclick="closeSheet()">Agora nao</button>
+  </div>
+</div>
+
+<script>
+function openSheet() {
+  document.getElementById('overlay').classList.add('active');
+  document.getElementById('sheet').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSheet() {
+  document.getElementById('overlay').classList.remove('active');
+  document.getElementById('sheet').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Swipe down to dismiss
+let startY = 0;
+const sheet = document.getElementById('sheet');
+sheet.addEventListener('touchstart', (e) => {
+  startY = e.touches[0].clientY;
+});
+sheet.addEventListener('touchmove', (e) => {
+  const diff = e.touches[0].clientY - startY;
+  if (diff > 80) closeSheet();
+});
+</script>
+
+</body>
+</html>

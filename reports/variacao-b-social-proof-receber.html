@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Variacao B — Social Proof + Box Selector + Copy "Receber"</title>
+<!--
+  VARIACAO B: Social Proof + Box Selector otimizada
+  ==================================================
+  Conceito: Tela de escolha com box selector, social proof e copy
+  inteiramente reframado de "vender" para "receber pagamentos / cobrar".
+  Reversibilidade explicita em cada opcao.
+
+  Racional de negocio:
+  - Reframing "receber" reduz barreira psicologica (nao preciso ser vendedor)
+  - Social proof com numero real gera confianca
+  - Box selector da sensacao de controle (escolha, nao imposicao)
+  - Reversibilidade explicita reduz ansiedade de decisao
+  - Badge "Popular" no box de receber usa efeito manada
+
+  Trade-offs:
+  + Maior conversao esperada pelo reframing + social proof
+  + Usuario sente que esta escolhendo, nao sendo empurrado
+  + Copy "receber" fala a lingua do usuario informal
+  - Tela mais longa, exige scroll
+  - Box pre-selecionado pode parecer dark pattern (mitigado: nenhum pre-selecionado)
+
+  Checklist Andes X:
+  [x] CTA Loud: fundo #009EE3 (azul accent MP)
+  [x] Botoes: 48px altura, radius 24px (pill)
+  [x] Tipografia: Inter, escalas corretas
+  [x] Spacing: escala 4/8/12/16/20/24/32/40
+  [x] Cards/box-selector: radius 12px
+  [x] Touch targets: minimo 48dp
+  [x] Navbar glass: rgba + blur(16px)
+  [x] Radio indicators: 22px com inner dot
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --accent-ui: #009EE3;
+    --accent-ui-hover: #0087C7;
+    --accent-ui-active: #0070A8;
+    --accent-loud: #434CE4;
+    --accent-quiet: #1B2755;
+    --positive: #00A650;
+    --positive-bg: #E6F7ED;
+    --warning: #FF7733;
+    --warning-bg: #FFF3EC;
+    --text-primary: #0D0D1B;
+    --text-secondary: #6B6B7B;
+    --text-on-fill: #FFFFFF;
+    --surface: #F4F5F9;
+    --background: #FFFFFF;
+    --gray-10: #F4F5F9;
+    --gray-20: #E7E8ED;
+    --brand-yellow: #FFE600;
+    --radius-sm: 8px;
+    --radius-button: 24px;
+    --radius-card: 12px;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: #F0F1F5;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .device-frame {
+    width: 100%;
+    max-width: 360px;
+    min-height: 100vh;
+    background: var(--background);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ========== NAVBAR GLASS ========== */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+  }
+
+  .navbar-back {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .navbar-back:hover { background: var(--gray-10); }
+  .navbar-back svg { width: 20px; height: 20px; fill: var(--text-primary); }
+
+  .navbar-steps {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gray-20);
+    transition: all 0.3s;
+  }
+
+  .step-dot.done { background: var(--positive); }
+
+  .step-dot.current {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--accent-ui);
+  }
+
+  /* ========== HEADER ========== */
+  .header {
+    padding: 24px 20px 16px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text-secondary);
+  }
+
+  /* ========== SOCIAL PROOF ========== */
+  .social-proof {
+    margin: 0 16px 20px;
+    padding: 12px 16px;
+    background: #EDF8F2;
+    border-radius: var(--radius-card);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideIn 0.4s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .avatar-stack {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #EDF8F2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+  }
+
+  .avatar:not(:first-child) { margin-left: -8px; }
+  .avatar:nth-child(1) { background: #FF6B6B; z-index: 3; }
+  .avatar:nth-child(2) { background: var(--accent-ui); z-index: 2; }
+  .avatar:nth-child(3) { background: var(--positive); z-index: 1; }
+
+  .social-text {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--text-primary);
+  }
+
+  .social-text strong {
+    font-weight: 700;
+    color: var(--positive);
+  }
+
+  /* ========== BOX SELECTOR ========== */
+  .options {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .box-selector {
+    border: 2px solid var(--gray-20);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    min-height: 48px;
+  }
+
+  .box-selector:hover {
+    border-color: #B0B3C7;
+  }
+
+  .box-selector.selected {
+    border-color: var(--accent-ui);
+    background: #F0FAFF;
+    box-shadow: 0 0 0 1px var(--accent-ui);
+  }
+
+  .box-selector:active {
+    transform: scale(0.99);
+  }
+
+  .box-radio {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .box-selector.selected .box-radio {
+    border-color: var(--accent-ui);
+    background: var(--accent-ui);
+  }
+
+  .box-radio::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+    transform: scale(0);
+    transition: transform 0.2s;
+  }
+
+  .box-selector.selected .box-radio::after {
+    transform: scale(1);
+  }
+
+  .box-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding-right: 32px;
+  }
+
+  .box-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .box-icon svg { width: 22px; height: 22px; }
+
+  .box-icon.personal { background: var(--positive-bg); }
+  .box-icon.personal svg { fill: var(--positive); }
+
+  .box-icon.receive { background: #E8F4FD; }
+  .box-icon.receive svg { fill: var(--accent-ui); }
+
+  .box-name {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    color: var(--text-primary);
+  }
+
+  .box-desc {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text-secondary);
+    padding-left: 52px;
+  }
+
+  .box-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .badge-default {
+    background: var(--positive-bg);
+    color: var(--positive);
+  }
+
+  .badge-popular {
+    background: var(--warning-bg);
+    color: var(--warning);
+  }
+
+  /* ========== EXPANDED BENEFITS (receber) ========== */
+  .expanded-benefits {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-20);
+    display: none;
+  }
+
+  .box-selector.selected .expanded-benefits {
+    display: block;
+  }
+
+  .benefit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .benefit-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: #E8F4FD;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .benefit-icon svg { width: 16px; height: 16px; fill: var(--accent-ui); }
+
+  .benefit-content { flex: 1; }
+
+  .benefit-title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--text-primary);
+  }
+
+  .benefit-value {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  .benefit-value strong {
+    color: var(--positive);
+    font-weight: 600;
+  }
+
+  /* Cost transparency */
+  .cost-note {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--positive-bg);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cost-note svg { width: 16px; height: 16px; fill: var(--positive); flex-shrink: 0; }
+
+  .cost-note p {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--text-primary);
+  }
+
+  /* ========== REVERSIBILITY ========== */
+  .reversibility {
+    margin: 20px 16px 0;
+    padding: 12px 16px;
+    background: var(--gray-10);
+    border-radius: var(--radius-card);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .reversibility svg { width: 16px; height: 16px; fill: var(--positive); flex-shrink: 0; }
+
+  .reversibility span {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  /* ========== CTA ========== */
+  .actions {
+    padding: 24px 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-loud {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-button);
+    background: var(--accent-ui);
+    color: var(--text-on-fill);
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-loud:hover { background: var(--accent-ui-hover); }
+  .btn-loud:active { background: var(--accent-ui-active); transform: scale(0.98); }
+
+  /* Reassurance footer */
+  .reassurance {
+    text-align: center;
+    padding: 0 16px 32px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--text-secondary);
+  }
+
+  .reassurance svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--text-secondary);
+    vertical-align: -2px;
+    margin-right: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="device-frame" role="main">
+
+  <nav class="navbar" role="navigation" aria-label="Navegacao">
+    <button class="navbar-back" aria-label="Voltar">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </button>
+    <div class="navbar-steps" role="progressbar" aria-valuenow="4" aria-valuemin="1" aria-valuemax="4" aria-label="Passo 4 de 4">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot current"></div>
+    </div>
+    <div style="width: 48px;"></div>
+  </nav>
+
+  <section class="header">
+    <h1>Como voce quer usar o Mercado Pago?</h1>
+    <p>Escolha o que faz sentido agora. Da pra mudar a qualquer momento.</p>
+  </section>
+
+  <!-- Social proof - reframado para "receber" -->
+  <div class="social-proof" role="status" aria-label="Prova social">
+    <div class="avatar-stack">
+      <div class="avatar">M</div>
+      <div class="avatar">R</div>
+      <div class="avatar">A</div>
+    </div>
+    <div class="social-text">
+      <strong>+2,3 milhoes</strong> de pessoas recebem pagamentos pelo app sem ter CNPJ
+    </div>
+  </div>
+
+  <!-- Box selectors -->
+  <div class="options" role="radiogroup" aria-label="Tipo de uso">
+
+    <!-- Uso pessoal -->
+    <div class="box-selector" role="radio" aria-checked="false" tabindex="0" aria-label="Uso pessoal" onclick="selectBox(this)">
+      <div class="box-radio"></div>
+      <div class="box-top">
+        <div class="box-icon personal">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <div>
+          <span class="box-name">Uso pessoal <span class="box-badge badge-default">Padrao</span></span>
+        </div>
+      </div>
+      <div class="box-desc">Pagar contas, transferir, investir e usar o cartao.</div>
+    </div>
+
+    <!-- Pessoal + receber pagamentos -->
+    <div class="box-selector" role="radio" aria-checked="false" tabindex="0" aria-label="Pessoal e receber pagamentos" onclick="selectBox(this)">
+      <div class="box-radio"></div>
+      <div class="box-top">
+        <div class="box-icon receive">
+          <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        </div>
+        <div>
+          <span class="box-name">Pessoal + cobrar <span class="box-badge badge-popular">Popular</span></span>
+        </div>
+      </div>
+      <div class="box-desc">Tudo acima + receber pagamentos de qualquer pessoa.</div>
+
+      <!-- Expanded benefits -->
+      <div class="expanded-benefits">
+        <div class="benefit-row">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+          </div>
+          <div class="benefit-content">
+            <div class="benefit-title">Links de cobranca</div>
+            <div class="benefit-value">Envie pelo WhatsApp e receba na hora</div>
+          </div>
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+          </div>
+          <div class="benefit-content">
+            <div class="benefit-title">Pix, cartao e boleto</div>
+            <div class="benefit-value">Quem te paga escolhe o meio</div>
+          </div>
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+          </div>
+          <div class="benefit-content">
+            <div class="benefit-title">Painel de recebimentos</div>
+            <div class="benefit-value">Acompanhe tudo que entrou</div>
+          </div>
+        </div>
+
+        <div class="cost-note">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <p>Gratis pra ativar. So paga taxa quando recebe um pagamento.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Reversibility -->
+  <div class="reversibility">
+    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+    <span>Voce pode mudar a qualquer momento em Configuracoes > Perfil. Sem burocracia.</span>
+  </div>
+
+  <!-- CTA -->
+  <div class="actions">
+    <button class="btn-loud" id="cta-btn" aria-label="Confirmar" disabled>Selecione uma opcao</button>
+  </div>
+
+  <div class="reassurance">
+    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+    Seus dados protegidos pela mesma seguranca do Mercado Livre
+  </div>
+
+</div>
+
+<script>
+function selectBox(el) {
+  document.querySelectorAll('.box-selector').forEach(function(box) {
+    box.classList.remove('selected');
+    box.setAttribute('aria-checked', 'false');
+  });
+  el.classList.add('selected');
+  el.setAttribute('aria-checked', 'true');
+
+  // Update CTA
+  var btn = document.getElementById('cta-btn');
+  btn.disabled = false;
+  var isReceive = el.querySelector('.receive');
+  if (isReceive) {
+    btn.textContent = 'Ativar e comecar a receber';
+  } else {
+    btn.textContent = 'Continuar com uso pessoal';
+  }
+}
+</script>
+
+</body>
+</html>
