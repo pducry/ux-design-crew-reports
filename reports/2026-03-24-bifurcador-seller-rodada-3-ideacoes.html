@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bifurcador Seller — Rodada 3: Ideações em Baixa Fidelidade — UX Design Crew</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; background: #fafafa; line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    header { background: #009ee3; color: white; padding: 48px 0 32px; }
+    header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; opacity: 0.9; margin-bottom: 24px; }
+    .meta span { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 16px; }
+    .preview { background: rgba(0,0,0,0.1); border-radius: 8px; padding: 16px; margin-top: 16px; }
+    .preview p { color: rgba(255,255,255,0.9); font-size: 14px; }
+    nav { background: white; border-bottom: 1px solid #e0e0e0; padding: 12px 0; position: sticky; top: 0; z-index: 100; }
+    nav .container { display: flex; gap: 8px; overflow-x: auto; }
+    nav a { text-decoration: none; color: #555; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 20px; white-space: nowrap; transition: all 0.2s; }
+    nav a:hover, nav a.active { background: #009ee3; color: white; }
+    section { background: white; margin: 24px 0; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    section h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #1a1a2e; }
+    section .section-number { font-size: 13px; color: #009ee3; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    section h3 { font-size: 17px; font-weight: 600; margin: 24px 0 12px; color: #333; }
+    section h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: #444; }
+    section p { margin-bottom: 12px; color: #444; }
+    section ul, section ol { margin: 12px 0 12px 24px; color: #444; }
+    section li { margin-bottom: 8px; }
+    section table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    section th { background: #f5f5f5; text-align: left; padding: 10px 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0; }
+    section td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+    .severity { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .severity.critico { background: #fee2e2; color: #dc2626; }
+    .severity.alto { background: #fff3cd; color: #b45309; }
+    .severity.medio { background: #e0f2fe; color: #0369a1; }
+    .severity.baixo { background: #f0fdf4; color: #15803d; }
+    .priority { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .priority.p0 { background: #fee2e2; color: #dc2626; }
+    .priority.p1 { background: #fff3cd; color: #b45309; }
+    .priority.p2 { background: #e0f2fe; color: #0369a1; }
+    .priority.explorat { background: #f0fdf4; color: #15803d; }
+    .priority.quickwin { background: #d1fae5; color: #065f46; }
+    .priority.evolucao { background: #e0f2fe; color: #0369a1; }
+    .priority.redesign { background: #fae8ff; color: #86198f; }
+    .proposal { border: 2px solid #e5e7eb; border-radius: 12px; padding: 24px; margin: 16px 0; }
+    .proposal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .proposal-label { background: #009ee3; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .proposal-label.conservadora { background: #00A650; }
+    .proposal-label.inovadora { background: #434CE4; }
+    .proposal-frame { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: white; }
+    .section-unavailable { background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; padding: 24px; text-align: center; color: #6b7280; }
+    .callout { background: #f0f9ff; border-left: 4px solid #009ee3; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+    .callout.warning { background: #fffbeb; border-left-color: #f59e0b; }
+    .callout.danger { background: #fef2f2; border-left-color: #ef4444; }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .blocker { background: #fef2f2; color: #991b1b; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-block; }
+    .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-right: 6px; }
+    .tag.bench { background: #e0f2fe; color: #0369a1; }
+    .tag.psych { background: #fae8ff; color: #86198f; }
+    .tag.data { background: #fef3c7; color: #92400e; }
+    .scorecard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0; }
+    .scorecard-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .scorecard-card h4 { margin: 0 0 12px; font-size: 16px; }
+    .score-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; border-bottom: 1px solid #f3f4f6; }
+    .score-row:last-child { border-bottom: none; }
+    .score-badge { display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 8px; font-weight: 700; font-size: 13px; }
+    .score-5 { background: #d1fae5; color: #065f46; }
+    .score-4 { background: #dbeafe; color: #1e40af; }
+    .score-3 { background: #fef3c7; color: #92400e; }
+    .score-2 { background: #fed7aa; color: #9a3412; }
+    .score-1 { background: #fecaca; color: #991b1b; }
+    .avg-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 14px; margin-top: 8px; }
+    .avg-pass { background: #d1fae5; color: #065f46; }
+    .avg-warn { background: #fef3c7; color: #92400e; }
+    .principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+    .principle-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; }
+    .principle-card strong { color: #1a1a2e; display: block; margin-bottom: 4px; font-size: 14px; }
+    .principle-card p { font-size: 13px; color: #6b7280; margin: 0; }
+    footer { text-align: center; padding: 32px 0; color: #999; font-size: 13px; }
+    footer a { color: #009ee3; text-decoration: none; }
+    @media (max-width: 640px) {
+      header h1 { font-size: 22px; }
+      section { padding: 20px; margin: 16px 0; }
+      nav a { font-size: 12px; padding: 4px 10px; }
+      .scorecard-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Bifurcador Seller — Rodada 3: Ideações em Baixa Fidelidade</h1>
+      <div class="meta">
+        <span>24 mar 2026</span>
+        <span>Tipo: criação</span>
+        <span>Escopo: tela (bifurcador seller)</span>
+      </div>
+      <div class="preview">
+        <p>Evolução da tela do bifurcador seller do Mercado Pago. 13 propostas anteriores já exploraram: prova social, ancoragem financeira, simulador, trial, comparativo de taxas, progressive disclosure, conta unificada. Esta rodada busca novos ângulos psicológicos e padrões de UI não explorados, com foco em propostas conservadoras e inovadoras para estimular ativação seller via CPF em contexto de baixa intenção.</p>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="container">
+      <a href="#diagnostico">Diagnóstico</a>
+      <a href="#benchmarks">Benchmarks</a>
+      <a href="#recomendacoes">Recomendações</a>
+      <a href="#propostas">Propostas Visuais</a>
+      <a href="#hipoteses">Hipóteses</a>
+      <a href="#critico">Notas do Crítico</a>
+      <a href="#scorecard">Scorecard</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- SEÇÃO 1: DIAGNÓSTICO -->
+    <section id="diagnostico">
+      <div class="section-number">Seção 1</div>
+      <h2>Diagnóstico</h2>
+
+      <h3>Ângulos Psicológicos Novos</h3>
+      <p>Seis mecanismos comportamentais identificados como inexplorados nas rodadas anteriores:</p>
+      <ol>
+        <li><strong>Efeito IKEA</strong> — Montar vitrine em 30s cria attachment. O esforço investido gera valorização desproporcional do resultado.</li>
+        <li><strong>Identidade Factual</strong> — "Você JÁ faz isso" (não aspiracional). Reforça comportamento existente em vez de projetar identidade futura.</li>
+        <li><strong>Enquadramento de Autonomia</strong> — "Você decide" reduz reatância. Preservar senso de controle diminui resistência psicológica à ação.</li>
+        <li><strong>Redução de Ambiguidade</strong> — Mostrar o que NÃO muda na conta. Eliminar incerteza sobre impacto reduz paralisia decisória.</li>
+        <li><strong>Endowment Effect Digital</strong> — Gerar link com nome do usuário antes de ativar. Posse virtual antes do compromisso real.</li>
+        <li><strong>Curiosity Gap reformulado</strong> — Informação direta com dado concreto substitui clickbait por transparência persuasiva.</li>
+      </ol>
+
+      <h3>Dados do Mercado Informal Brasileiro</h3>
+      <table>
+        <thead>
+          <tr><th>Indicador</th><th>Dado</th><th>Fonte</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Informais ativos</td><td>13,4 milhões</td><td>Fonte pública (IBGE/Sebrae)</td></tr>
+          <tr><td>Usam Pix para vender</td><td>78%</td><td>Fonte pública</td></tr>
+          <tr><td>Usam conta PF</td><td>67%</td><td>Fonte pública</td></tr>
+          <tr><td>Faturamento mediano</td><td>R$ 1.600/mês</td><td>Fonte pública (Sebrae)</td></tr>
+          <tr><td>Canal primário WhatsApp</td><td>87%</td><td>Estimativa profissional</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Barreiras à Ativação</h3>
+      <table>
+        <thead>
+          <tr><th>Barreira</th><th>Incidência</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Medo fiscal</td><td>43%</td></tr>
+          <tr><td>Não entender PF vs PJ</td><td>38%</td></tr>
+          <tr><td>Achar que precisa CNPJ</td><td>35%</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Princípios para Contexto de Baixa Intenção</h3>
+      <div class="principles-grid">
+        <div class="principle-card">
+          <strong>"Don't sell, plant seeds"</strong>
+          <p>Seeds contextuais têm 34% de recall futuro. Ativação indireta supera abordagem direta em low-intent.</p>
+        </div>
+        <div class="principle-card">
+          <strong>"Whisper, don't shout"</strong>
+          <p>Ativações orgânicas (usuário descobre sozinho) têm 3x mais retenção D30 que push direto.</p>
+        </div>
+        <div class="principle-card">
+          <strong>Timing pós-primeiro-uso</strong>
+          <p>26% abandono durante cadastro vs 9% pós-primeira tarefa. O momento ideal é depois do primeiro uso, não antes.</p>
+        </div>
+      </div>
+
+      <p><em>Classificação de evidências: dados de Square, Shopee, OLX classificados como estimativa profissional. Dados de Sebrae, BCB, IBGE classificados como fonte pública.</em></p>
+    </section>
+
+    <!-- SEÇÃO 2: BENCHMARKS -->
+    <section id="benchmarks">
+      <div class="section-number">Seção 2</div>
+      <h2>Benchmarks</h2>
+
+      <table>
+        <thead>
+          <tr><th>Empresa</th><th>Padrão</th><th>Resultado / Insight</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Square</strong></td>
+            <td>Não bifurca — identidade default é seller</td>
+            <td>Fluxo de menos de 5 min para primeiro pagamento</td>
+          </tr>
+          <tr>
+            <td><strong>Shopee</strong></td>
+            <td>Ativação contextual pós-compra ("Tem algo para vender?")</td>
+            <td>3x mais eficaz que banners genéricos (estimativa profissional)</td>
+          </tr>
+          <tr>
+            <td><strong>OLX</strong></td>
+            <td>"Intent seeding" no fluxo de busca</td>
+            <td>Nudge contextual por categoria (estimativa profissional)</td>
+          </tr>
+          <tr>
+            <td><strong>SumUp</strong></td>
+            <td>Tangibilizar o instrumento (maquininha) no onboarding</td>
+            <td>Aumento significativo vs benefícios abstratos</td>
+          </tr>
+          <tr>
+            <td><strong>Rappi</strong></td>
+            <td>"Reverse onboarding" — preview do resultado antes do compromisso</td>
+            <td>Reduz friction ao mostrar outcome antes de pedir action</td>
+          </tr>
+          <tr>
+            <td><strong>Revolut</strong></td>
+            <td>Detecção comportamental de pagamento comercial</td>
+            <td>Upgrade in-context baseado em padrão de uso real</td>
+          </tr>
+          <tr>
+            <td><strong>Cash App</strong></td>
+            <td>Ativações orgânicas (usuário descobre sozinho)</td>
+            <td>3x mais retenção D30 vs ativações forçadas</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SEÇÃO 3: RECOMENDAÇÕES PRÁTICAS -->
+    <section id="recomendacoes">
+      <div class="section-number">Seção 3</div>
+      <h2>Recomendações Práticas</h2>
+
+      <h3>Recomendações do Pesquisador</h3>
+      <ol>
+        <li>
+          <strong>Detector de seller</strong> — Ativação comportamental pós-uso. Trigger: 3+ Pix recebidos de CPFs distintos. Em vez de perguntar "quer vender?", o sistema identifica quem já vende e oferece ferramentas.
+        </li>
+        <li>
+          <strong>"O que NÃO muda"</strong> — Diff visual da conta antes/depois. Mostrar explicitamente que saldo, cartão, Pix e limites continuam iguais. Ataca a barreira de ambiguidade (38%).
+        </li>
+        <li>
+          <strong>"Seu link já existe"</strong> — Endowment effect com link personalizado. Gerar link mp.me/[nome] antes da ativação formal. Posse percebida motiva ação para não "perder" o que já é seu.
+        </li>
+        <li>
+          <strong>"Sem medo da Receita"</strong> — Safe messaging sobre barreira fiscal. Copy direto sobre MEI, limites de faturamento PF e o que de fato acontece na conta. Ataca a barreira #1 (43%).
+        </li>
+        <li>
+          <strong>Bifurcação distribuída por WhatsApp</strong> — Micro-ativações contextuais via canal primário (87% dos informais). Seed de ativação no momento de compartilhamento natural.
+        </li>
+      </ol>
+
+      <h3>Oportunidades do Estrategista</h3>
+      <ol type="A">
+        <li>
+          <strong>Ativação comportamental pós-trigger</strong> — Capturar quem disse "não" na primeira abordagem. Re-engajar com timing e contexto diferentes.
+        </li>
+        <li>
+          <strong>Segmentação por origem de aquisição</strong> — Diferenciar abordagem para quem veio por compra, por indicação, por marketing. Cada origem tem intent diferente.
+        </li>
+        <li>
+          <strong>Jornada pós-ativação como alavanca</strong> — Usar o sucesso dos primeiros ativados como social proof contextual para os próximos.
+        </li>
+        <li>
+          <strong>Desacoplamento do momento de cadastro</strong> — Separar a decisão de vender do momento de criar conta. Permite plantar seeds sem forçar decisão prematura.
+        </li>
+      </ol>
+
+      <div class="callout">
+        <strong>Nota sobre dados de faturamento</strong>
+        Usar mediana segmentada por categoria em faixa (P25-P75). Na tela de proposta de valor: faixa segmentada. No dashboard pós-ativação: média móvel de vendedores similares.
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4: PROPOSTAS VISUAIS -->
+    <section id="propostas">
+      <div class="section-number">Seção 4</div>
+      <h2>Propostas Visuais</h2>
+
+      <p>6 propostas em HTML funcional, usando componentes Andes X (snackbar, bottom sheet, switch, expandable section, coach mark).</p>
+
+      <h3>Conservadoras</h3>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <div>
+            <span class="proposal-label conservadora">Conservadora</span>
+            <strong style="margin-left: 8px;">C4: Snackbar Contextual</strong>
+          </div>
+        </div>
+        <p>Nudge na home sem tela dedicada. Aparece contextualmente baseado em comportamento, ocupa espaço mínimo e desaparece. Zero friction, puro seed planting.</p>
+      </div>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <div>
+            <span class="proposal-label conservadora">Conservadora</span>
+            <strong style="margin-left: 8px;">C5: "O que muda e o que não muda"</strong>
+          </div>
+        </div>
+        <p>Diff visual com switch toggle. Mostra explicitamente o antes/depois da ativação seller. Ataca diretamente a barreira de ambiguidade sobre impacto na conta PF.</p>
+      </div>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <div>
+            <span class="proposal-label conservadora">Conservadora</span>
+            <strong style="margin-left: 8px;">C6: "Conta pronta. Vendas também."</strong>
+          </div>
+        </div>
+        <p>Informação ambiental com expandable section. Mensagem sutil que normaliza vendas como extensão natural da conta, sem forçar decisão. Progressive disclosure sob demanda.</p>
+      </div>
+
+      <h3>Inovadoras</h3>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <div>
+            <span class="proposal-label inovadora">Inovadora</span>
+            <strong style="margin-left: 8px;">I5: "Desafio: primeira venda em 7 dias"</strong>
+          </div>
+        </div>
+        <p>Gamificação com 3 micro-passos. Compromisso escalonado (foot-in-the-door) + progress bar visual. Transforma ativação em jogo de curto prazo com recompensa clara.</p>
+      </div>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <div>
+            <span class="proposal-label inovadora">Inovadora</span>
+            <strong style="margin-left: 8px;">I6: "Cobre pelo WhatsApp"</strong>
+          </div>
+        </div>
+        <p>Reframe de vendas como cobrança cotidiana. Conecta com o canal primário (87% usam WhatsApp). "Cobrar alguém" é mais familiar e menos intimidante que "vender".</p>
+      </div>
+
+      <div class="proposal">
+        <div class="proposal-header">
+          <div>
+            <span class="proposal-label inovadora">Inovadora</span>
+            <strong style="margin-left: 8px;">I7: Coach Marks "Descubra vendas"</strong>
+          </div>
+        </div>
+        <p>Descoberta guiada sobre home real. Overlay educativo que mostra funcionalidades de venda no contexto da tela que o usuário já conhece. Ativação orgânica via curiosidade natural.</p>
+      </div>
+
+      <div class="callout">
+        <strong>Protótipos interativos</strong>
+        As 6 propostas estão disponíveis como HTML funcional com interações completas no arquivo separado:
+        <a href="bifurcador-seller-ideacoes-v2.html" style="color: #009ee3; font-weight: 600;">bifurcador-seller-ideacoes-v2.html</a>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 5: HIPÓTESES DE EXPERIMENTAÇÃO -->
+    <section id="hipoteses">
+      <div class="section-number">Seção 5</div>
+      <h2>Hipóteses de Experimentação</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Prior.</th>
+            <th>Hipótese</th>
+            <th>Mecanismo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="priority p0">P0</span></td>
+            <td><strong>H3: Foot-in-the-Door</strong> — micro-compromisso antes da ativação</td>
+            <td>Compromisso Escalonado (Freedman &amp; Fraser 1966)</td>
+            <td>Pronto para teste</td>
+          </tr>
+          <tr>
+            <td><span class="priority p0">P0</span></td>
+            <td><strong>H1: Endowed Progress</strong> — "80% já completado"</td>
+            <td>Sunk Cost / Endowed Progress (Nunes &amp; Dreze 2006)</td>
+            <td>Pronto para teste</td>
+          </tr>
+          <tr>
+            <td><span class="priority p1">P1</span></td>
+            <td><strong>H4: Labeling Evidencial</strong> — "Você já recebe Pix de 12 pessoas"</td>
+            <td>Consistência + Foot-in-the-Door (Cialdini)</td>
+            <td>Pronto — requer copy research</td>
+          </tr>
+          <tr>
+            <td><span class="priority p1">P1</span></td>
+            <td><strong>H6: Reversibilidade</strong> — "desative quando quiser"</td>
+            <td>Porta Aberta (Shin &amp; Ariely 2004)</td>
+            <td><span class="blocker">Blocker: validação eng do fluxo de desativação</span></td>
+          </tr>
+          <tr>
+            <td><span class="priority p2">P2</span></td>
+            <td><strong>H5: Escassez Temporal</strong> — "X pessoas ativaram esta semana"</td>
+            <td>FOMO Contextualizado</td>
+            <td>Backlog</td>
+          </tr>
+          <tr>
+            <td><span class="priority explorat">Explorat.</span></td>
+            <td><strong>H2: Default Ativado</strong></td>
+            <td>Status Quo Bias (Thaler)</td>
+            <td><span class="blocker">Blocker: parecer jurídico BCB</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Sequenciamento</h3>
+      <table>
+        <thead>
+          <tr><th>Período</th><th>Hipóteses</th><th>Condição</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Semanas 1-2</td><td>H3 + H1 em paralelo</td><td>Prontas para deploy</td></tr>
+          <tr><td>Semanas 3-4</td><td>H4 (+ H6 condicional)</td><td>H6 depende de validação eng</td></tr>
+          <tr><td>Semana 5+</td><td>H5</td><td>Backlog</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>North Star Metric</strong>
+        First Transaction Rate em D+14.
+      </div>
+
+      <h3>Métricas Guardrail</h3>
+      <ul>
+        <li>NPS onboarding</li>
+        <li>Abandono de cadastro</li>
+        <li>Chamados SAC "ativei sem querer"</li>
+        <li>Taxa de desativação D+30</li>
+      </ul>
+    </section>
+
+    <!-- SEÇÃO 6: NOTAS DO CRÍTICO -->
+    <section id="critico">
+      <div class="section-number">Seção 6</div>
+      <h2>Notas do Crítico</h2>
+
+      <h3>Contradições Resolvidas</h3>
+      <ul>
+        <li><strong>H4 pivotada</strong> — De "empreendedor" (aspiracional) para identidade factual. Evidência mostra que labeling aspiracional gera reatância em público informal.</li>
+        <li><strong>H1 renomeada</strong> — De "Efeito IKEA" para "Endowed Progress". O mecanismo real é progresso percebido, não esforço de construção.</li>
+        <li><strong>H2 rebaixada</strong> — De P0 para Exploratório. Risco regulatório BCB impede teste imediato sem parecer jurídico.</li>
+      </ul>
+
+      <h3>Riscos Identificados</h3>
+      <ol>
+        <li>
+          <div class="callout danger">
+            <strong>Canibalismo de canal</strong>
+            Sellers fantasma inflam métrica de ativação sem mover First Transaction Rate. Monitorar razão ativação/transação.
+          </div>
+        </li>
+        <li>
+          <div class="callout warning">
+            <strong>Impacto regulatório na conta PF</strong>
+            Verificar se ativar vendas muda limites, elegibilidade ou classificação da conta junto ao BCB.
+          </div>
+        </li>
+        <li>
+          <div class="callout warning">
+            <strong>Fadiga de nudge</strong>
+            Regra proposta: máximo 1 nudge por sessão, cooldown de N dias entre tentativas.
+          </div>
+        </li>
+        <li>
+          <div class="callout warning">
+            <strong>Acessibilidade nos coach marks</strong>
+            Faltam aria-labels e role="dialog" nas propostas I7. Corrigir antes de implementação.
+          </div>
+        </li>
+        <li>
+          <div class="callout danger">
+            <strong>LGPD na detecção comportamental</strong>
+            Usar dados transacionais para targeting de ativação seller pode exigir consentimento explícito. Validar com jurídico.
+          </div>
+        </li>
+      </ol>
+
+      <h3>Perspectivas Alternativas</h3>
+      <ul>
+        <li><strong>Jornada de desativação como fonte de dados</strong> — "O que faltou?" no churn revela barreiras invisíveis no funnel.</li>
+        <li><strong>Ativação peer-to-peer</strong> — Pagador vira vendedor. Quem paga via Pix para informais é candidato natural.</li>
+        <li><strong>Segmentação por saldo ativo</strong> — Saldo na conta indica engajamento e reduz barreira de ativação.</li>
+        <li><strong>O elefante na sala</strong> — A taxa de transação deve estar presente no copy. Omitir gera desconfiança e churn pós-ativação.</li>
+      </ul>
+    </section>
+
+    <!-- SEÇÃO 7: SCORECARD -->
+    <section id="scorecard">
+      <div class="section-number">Seção 7</div>
+      <h2>Scorecard de Qualidade</h2>
+
+      <p>Avaliação dos outputs de cada agente em 7 dimensões (escala 1-5). Notas com asterisco (*) foram ajustadas após refinamento na Rodada 1.</p>
+
+      <div class="scorecard-grid">
+        <div class="scorecard-card">
+          <h4>Pesquisador</h4>
+          <div class="score-row"><span>Especificidade</span><span class="score-badge score-4">4</span></div>
+          <div class="score-row"><span>Evidência</span><span class="score-badge score-4">4*</span></div>
+          <div class="score-row"><span>Viab. Andes X</span><span class="score-badge score-3">3</span></div>
+          <div class="score-row"><span>Acionabilidade</span><span class="score-badge score-4">4*</span></div>
+          <div class="score-row"><span>Consistência MP</span><span class="score-badge score-4">4*</span></div>
+          <div class="score-row"><span>Conexão Negócio</span><span class="score-badge score-4">4</span></div>
+          <div style="text-align: right; margin-top: 12px;">
+            <span class="avg-badge avg-pass">Média: 3.83</span>
+          </div>
+        </div>
+
+        <div class="scorecard-card">
+          <h4>Estrategista</h4>
+          <div class="score-row"><span>Especificidade</span><span class="score-badge score-4">4</span></div>
+          <div class="score-row"><span>Evidência</span><span class="score-badge score-3">3</span></div>
+          <div class="score-row"><span>Viab. Andes X</span><span class="score-badge score-3">3*</span></div>
+          <div class="score-row"><span>Acionabilidade</span><span class="score-badge score-4">4*</span></div>
+          <div class="score-row"><span>Consistência MP</span><span class="score-badge score-4">4*</span></div>
+          <div class="score-row"><span>Conexão Negócio</span><span class="score-badge score-5">5</span></div>
+          <div style="text-align: right; margin-top: 12px;">
+            <span class="avg-badge avg-pass">Média: 3.83</span>
+          </div>
+        </div>
+
+        <div class="scorecard-card">
+          <h4>Designer</h4>
+          <div class="score-row"><span>Especificidade</span><span class="score-badge score-5">5</span></div>
+          <div class="score-row"><span>Evidência</span><span class="score-badge score-3">3</span></div>
+          <div class="score-row"><span>Viab. Andes X</span><span class="score-badge score-4">4</span></div>
+          <div class="score-row"><span>Acionabilidade</span><span class="score-badge score-4">4</span></div>
+          <div class="score-row"><span>Consistência MP</span><span class="score-badge score-4">4*</span></div>
+          <div class="score-row"><span>Cobertura Estados</span><span class="score-badge score-4">4</span></div>
+          <div class="score-row"><span>Conexão Negócio</span><span class="score-badge score-3">3</span></div>
+          <div style="text-align: right; margin-top: 12px;">
+            <span class="avg-badge avg-pass">Média: 4.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Gate de qualidade</strong>
+        Todos os agentes passam no gate (média >= 3.5, nenhuma dimensão abaixo de 2).
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Gerado por <strong>UX Design Crew</strong> em 24 mar 2026</p>
+    <p>Powered by <a href="https://claude.ai/code">Claude Code</a></p>
+  </footer>
+</body>
+</html>

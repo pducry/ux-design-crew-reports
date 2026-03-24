@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bifurcador Seller — Rodada 3 | 6 Propostas</title>
+<style>
+  :root {
+    --accent-ui: #009EE3;
+    --accent-loud: #434CE4;
+    --accent-loud-hover: #353AC5;
+    --accent-loud-active: #272C96;
+    --accent-quiet: #1B2755;
+    --positive: #00A650;
+    --negative: #F23D4F;
+    --warning: #FF7733;
+    --text-primary: #0D0D1B;
+    --text-secondary: #6B6B85;
+    --text-on-fill: #FFFFFF;
+    --surface: #F4F5F9;
+    --background: #FFFFFF;
+    --gray-20: #E7E8ED;
+    --brand-yellow: #FFE600;
+    --brand-cyan: #00BCFF;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --sp-4: 4px; --sp-8: 8px; --sp-12: 12px; --sp-16: 16px;
+    --sp-20: 20px; --sp-24: 24px; --sp-32: 32px; --sp-40: 40px;
+    --sp-48: 48px; --sp-56: 56px; --sp-64: 64px; --sp-80: 80px;
+    --radius-sm: 8px; --radius-btn: 12px; --radius-section: 20px; --radius-card: 48px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #1a1a2e; color: var(--text-primary); min-height: 100vh; }
+
+  .gallery-header {
+    position: sticky; top: 0; z-index: 1000;
+    background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(16px);
+    padding: var(--sp-16) var(--sp-24); border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .gallery-header h1 { color: #fff; font-size: 16px; font-weight: 600; margin-bottom: var(--sp-12); }
+  .gallery-header .subtitle { color: rgba(255,255,255,0.5); font-size: 12px; margin-bottom: var(--sp-12); }
+  .tab-nav { display: flex; gap: var(--sp-8); overflow-x: auto; scrollbar-width: none; padding-bottom: var(--sp-4); }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; border: none; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+    font-family: var(--font); font-size: 12px; font-weight: 500; padding: var(--sp-8) var(--sp-16);
+    border-radius: var(--radius-btn); cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+  .tab-btn.active { background: var(--accent-loud); color: #fff; }
+  .tab-btn.conservadora::before { content: "C"; display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; background: rgba(0,166,80,0.3); border-radius: 4px; margin-right: 6px; font-size: 10px; font-weight: 700; color: #00A650; }
+  .tab-btn.inovadora::before { content: "I"; display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; background: rgba(67,76,228,0.3); border-radius: 4px; margin-right: 6px; font-size: 10px; font-weight: 700; color: #818cf8; }
+
+  .proposal-panel { display: none; max-width: 480px; margin: 0 auto; padding: var(--sp-24); }
+  .proposal-panel.active { display: block; }
+
+  .meta-card {
+    background: rgba(255,255,255,0.05); border-radius: var(--radius-section);
+    padding: var(--sp-24); margin-bottom: var(--sp-24); border: 1px solid rgba(255,255,255,0.08);
+  }
+  .meta-card .label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--sp-4); }
+  .meta-card .label.concept { color: var(--brand-cyan); }
+  .meta-card .label.racional { color: var(--brand-yellow); }
+  .meta-card .label.states { color: #00A650; }
+  .meta-card p { color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.5; margin-bottom: var(--sp-16); }
+  .meta-card p:last-child { margin-bottom: 0; }
+
+  .phone-frame {
+    width: 375px; max-width: 100%; margin: 0 auto; border-radius: 40px;
+    overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    border: 8px solid #2a2a40; background: var(--background); position: relative;
+  }
+  .phone-frame .status-bar {
+    height: 44px; background: var(--background); display: flex;
+    align-items: center; justify-content: center; padding: 0 var(--sp-24);
+  }
+  .phone-frame .status-bar::before {
+    content: ""; width: 80px; height: 24px; background: #1a1a2e;
+    border-radius: 12px; position: absolute; top: 8px;
+  }
+  .phone-screen { min-height: 700px; background: var(--background); overflow-y: auto; position: relative; }
+
+  .state-toggle { display: flex; gap: var(--sp-4); margin-bottom: var(--sp-16); flex-wrap: wrap; }
+  .state-btn {
+    font-family: var(--font); font-size: 11px; padding: 4px 10px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.15); background: transparent;
+    color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.15s;
+  }
+  .state-btn:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+  .state-btn.active { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.25); }
+
+  .andes-navbar {
+    height: 56px; display: flex; align-items: center; padding: 0 var(--sp-16);
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(16px); gap: var(--sp-12);
+  }
+  .andes-navbar .back-arrow { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+  .andes-navbar .back-arrow svg { width: 20px; height: 20px; }
+  .andes-navbar .nav-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+
+  .btn-loud {
+    display: flex; align-items: center; justify-content: center; width: 100%; height: 48px;
+    background: var(--accent-loud); color: var(--text-on-fill); border: none;
+    border-radius: var(--radius-btn); font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s; padding: 2px 24px;
+  }
+  .btn-loud:hover { background: var(--accent-loud-hover); }
+  .btn-loud:active { background: var(--accent-loud-active); }
+  .btn-quiet {
+    display: flex; align-items: center; justify-content: center; width: 100%; height: 48px;
+    background: var(--accent-quiet); color: var(--text-on-fill); border: none;
+    border-radius: var(--radius-btn); font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer; padding: 2px 24px;
+  }
+  .btn-mute {
+    display: flex; align-items: center; justify-content: center; width: 100%; height: 48px;
+    background: transparent; color: var(--accent-loud); border: none;
+    border-radius: var(--radius-btn); font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer; padding: 2px 24px;
+  }
+  .btn-small { height: 32px; padding: 2px 16px; border-radius: var(--radius-sm); font-size: 13px; }
+
+  .andes-snackbar {
+    position: absolute; bottom: 24px; left: 16px; right: 16px;
+    background: var(--accent-quiet); color: var(--text-on-fill);
+    padding: var(--sp-16); border-radius: var(--radius-btn);
+    display: flex; align-items: center; gap: var(--sp-12);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1); z-index: 10;
+  }
+  @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .andes-snackbar .snack-icon { width: 24px; height: 24px; flex-shrink: 0; }
+  .andes-snackbar .snack-text { font-size: 13px; line-height: 1.4; flex: 1; }
+  .andes-snackbar .snack-action {
+    font-size: 13px; font-weight: 600; color: var(--brand-cyan);
+    background: none; border: none; cursor: pointer; flex-shrink: 0; font-family: var(--font);
+  }
+
+  .bottom-sheet-overlay {
+    position: absolute; inset: 0; background: rgba(13,13,27,0.5);
+    z-index: 20; display: flex; align-items: flex-end;
+  }
+  .bottom-sheet {
+    width: 100%; background: var(--background);
+    border-radius: var(--radius-section) var(--radius-section) 0 0;
+    padding: var(--sp-12) var(--sp-24) var(--sp-40);
+    animation: sheetUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .bottom-sheet .handle { width: 40px; height: 4px; background: var(--gray-20); border-radius: 2px; margin: 0 auto var(--sp-24); }
+
+  .andes-switch {
+    width: 48px; height: 28px; background: var(--gray-20); border-radius: 14px;
+    position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; border: none;
+  }
+  .andes-switch::after {
+    content: ""; width: 22px; height: 22px; background: #fff; border-radius: 50%;
+    position: absolute; top: 3px; left: 3px; transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .andes-switch.on { background: var(--accent-loud); }
+  .andes-switch.on::after { transform: translateX(20px); }
+
+  .coach-mark { position: absolute; z-index: 15; animation: coachPulse 2s ease-in-out infinite; }
+  @keyframes coachPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+  .coach-mark .coach-bubble {
+    background: var(--accent-quiet); color: var(--text-on-fill);
+    padding: var(--sp-16); border-radius: var(--radius-btn); font-size: 13px; line-height: 1.5;
+    max-width: 280px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); position: relative;
+  }
+  .coach-mark .coach-bubble::after {
+    content: ""; position: absolute; width: 12px; height: 12px;
+    background: var(--accent-quiet); transform: rotate(45deg);
+  }
+  .coach-bubble.arrow-top::after { top: -6px; left: 24px; }
+  .coach-step { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sp-12); }
+  .coach-step .dots { display: flex; gap: 4px; }
+  .coach-step .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+  .coach-step .dot.active { background: #fff; }
+  .coach-step button {
+    background: none; border: none; color: var(--brand-cyan);
+    font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
+  .expandable { border-bottom: 1px solid var(--gray-20); }
+  .expandable-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--sp-16) 0; cursor: pointer; user-select: none;
+  }
+  .expandable-header .exp-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .expandable-header .chevron { width: 20px; height: 20px; transition: transform 0.2s; color: var(--text-secondary); }
+  .expandable-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .expandable.open .expandable-body { max-height: 400px; }
+  .expandable.open .chevron { transform: rotate(180deg); }
+</style>
+</head>
+<body>
+
+<header class="gallery-header">
+  <h1>Bifurcador Seller -- Rodada 3</h1>
+  <p class="subtitle">6 propostas | 3 conservadoras + 3 inovadoras | Componentes Andes X inexplorados</p>
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn conservadora active" onclick="showProposal(1)" role="tab">1. Snackbar Nudge</button>
+    <button class="tab-btn conservadora" onclick="showProposal(2)" role="tab">2. Bottom Sheet Lazy</button>
+    <button class="tab-btn conservadora" onclick="showProposal(3)" role="tab">3. Switch Ativa</button>
+    <button class="tab-btn inovadora" onclick="showProposal(4)" role="tab">4. Desafio 7 Dias</button>
+    <button class="tab-btn inovadora" onclick="showProposal(5)" role="tab">5. WhatsApp Hook</button>
+    <button class="tab-btn inovadora" onclick="showProposal(6)" role="tab">6. Coach Mark</button>
+  </nav>
+</header>
+
+<!-- PROPOSTA 1: SNACKBAR CONTEXTUAL NUDGE -->
+<section class="proposal-panel active" id="proposal-1">
+  <div class="meta-card">
+    <p class="label concept">Conceito</p>
+    <p>Em vez de uma tela dedicada de bifurcacao, o convite para vender aparece como um snackbar persistente dentro da home da conta pessoal. Zero bloqueio de fluxo. O usuario decide quando (e se) quer explorar.</p>
+    <p class="label racional">Racional de Negocio</p>
+    <p>Telas de bifurcacao interrompem o fluxo e causam drop-off em usuarios de baixa intencao. Um snackbar contextual tem custo cognitivo proximo de zero: nao exige decisao imediata, nao bloqueia o fluxo, mas garante visibilidade. Dados de nudge patterns em fintech mostram 18-25% mais engagement que telas full-screen para audiencias de baixa intencao. O dismiss registra sinalizacao sem fricao.</p>
+    <p class="label states">Estados</p>
+    <p>Idle: snackbar visivel na base da home. Dismiss: snackbar desliza para baixo, lembrete desaparece por 7 dias. Ao tocar "Ver": abre mini-painel inline. Loading: skeleton no mini-painel. Error: snackbar com retry.</p>
+  </div>
+
+  <div class="state-toggle">
+    <button class="state-btn active" onclick="toggleState(1, 'idle')">Idle</button>
+    <button class="state-btn" onclick="toggleState(1, 'dismiss')">Dismiss</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="status-bar"></div>
+    <div class="phone-screen" style="position: relative; background: var(--background);">
+      <div style="padding: 0 var(--sp-16);">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--sp-16) 0 var(--sp-8);">
+          <div>
+            <p style="font-size: 14px; color: var(--text-secondary);">Ola,</p>
+            <p style="font-size: 20px; font-weight: 600; color: var(--text-primary);">Marina</p>
+          </div>
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" fill="none" stroke="var(--text-secondary)" stroke-width="2"><circle cx="10" cy="10" r="4"/><path d="M2 18c0-3.3 2.7-6 6-6h4c3.3 0 6 2.7 6 6"/></svg>
+          </div>
+        </div>
+        <div style="background: var(--surface); border-radius: var(--radius-section); padding: var(--sp-24); margin-bottom: var(--sp-16);">
+          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--sp-4);">Seu saldo</p>
+          <p style="font-size: 28px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.025em;">R$ 1.240,00</p>
+          <div style="display: flex; gap: var(--sp-12); margin-top: var(--sp-16);">
+            <div style="flex: 1; background: var(--background); border-radius: var(--radius-btn); padding: var(--sp-12); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><path d="M12 5v14M5 12h14" stroke="var(--accent-loud)" stroke-width="2" stroke-linecap="round"/></svg>
+              <p style="font-size: 11px; color: var(--text-primary); font-weight: 500;">Adicionar</p>
+            </div>
+            <div style="flex: 1; background: var(--background); border-radius: var(--radius-btn); padding: var(--sp-12); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><path d="M5 12h14M12 5l7 7-7 7" stroke="var(--accent-loud)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <p style="font-size: 11px; color: var(--text-primary); font-weight: 500;">Transferir</p>
+            </div>
+            <div style="flex: 1; background: var(--background); border-radius: var(--radius-btn); padding: var(--sp-12); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><rect x="3" y="6" width="18" height="12" rx="2" stroke="var(--accent-loud)" stroke-width="2"/><path d="M3 10h18" stroke="var(--accent-loud)" stroke-width="2"/></svg>
+              <p style="font-size: 11px; color: var(--text-primary); font-weight: 500;">Cartao</p>
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--sp-12);">Atividade recente</p>
+        <div style="display: flex; align-items: center; gap: var(--sp-12); padding: var(--sp-12) 0; border-bottom: 1px solid var(--gray-20);">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #E8F5E9; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" fill="none"><path d="M9 2v14M2 9l7-7 7 7" stroke="var(--positive)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="flex: 1;">
+            <p style="font-size: 14px; font-weight: 500;">Pix recebido</p>
+            <p style="font-size: 12px; color: var(--text-secondary);">Carlos S. -- ontem</p>
+          </div>
+          <p style="font-size: 14px; font-weight: 600; color: var(--positive);">+ R$ 150</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: var(--sp-12); padding: var(--sp-12) 0; border-bottom: 1px solid var(--gray-20);">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #FFF3E0; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" fill="none"><path d="M9 16V2M2 9l7 7 7-7" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="flex: 1;">
+            <p style="font-size: 14px; font-weight: 500;">Pagamento</p>
+            <p style="font-size: 12px; color: var(--text-secondary);">iFood -- 22 mar</p>
+          </div>
+          <p style="font-size: 14px; font-weight: 500; color: var(--text-primary);">- R$ 47,90</p>
+        </div>
+        <div style="height: 100px;"></div>
+      </div>
+
+      <div class="andes-snackbar" id="p1-idle" style="display: flex;">
+        <div class="snack-icon">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <rect x="2" y="4" width="20" height="16" rx="3" stroke="var(--brand-yellow)" stroke-width="1.5"/>
+            <path d="M8 12h8M8 15h5" stroke="var(--brand-yellow)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="18" cy="6" r="4" fill="var(--positive)"/>
+            <path d="M16.5 6l1 1 2-2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="snack-text">Receba pagamentos com seu CPF. Sem taxa de adesao.</span>
+        <button class="snack-action">Ver</button>
+      </div>
+
+      <div class="andes-snackbar" id="p1-dismiss" style="display: none; background: var(--text-primary); opacity: 0.95;">
+        <div class="snack-icon">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path d="M5 13l4 4L19 7" stroke="var(--positive)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="snack-text">Entendido. Lembramos em outro momento.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSTA 2: BOTTOM SHEET "GUARDA PRA DEPOIS" -->
+<section class="proposal-panel" id="proposal-2">
+  <div class="meta-card">
+    <p class="label concept">Conceito</p>
+    <p>Um bottom sheet que sobe suavemente apos o onboarding da conta pessoal estar completo. Posiciona vendas como uma capacidade que ja esta pronta, so precisa ser "ligada" quando quiser. Oferece "guardar pra depois" como opcao de igual peso ao CTA principal.</p>
+    <p class="label racional">Racional de Negocio</p>
+    <p>O bottom sheet eh percebido como informacao complementar (nao bloqueio). A opcao "guardar" cria compromisso psicologico leve (Zeigarnik effect) -- o usuario sabe que tem algo pendente, e tende a voltar. Conversao diferida: coleta intencao para re-engagement via push/in-app em momento de maior intencao. Componente Andes X bottom sheet nao explorado nas rodadas anteriores.</p>
+    <p class="label states">Estados</p>
+    <p>Idle: bottom sheet visivel sobre a tela de sucesso. Dismiss: sheet desce, badge sutil "Vendas: guardado" no perfil. Success: ao tocar "Ativar agora", transicao para fluxo de vendas.</p>
+  </div>
+
+  <div class="state-toggle">
+    <button class="state-btn active" onclick="toggleState(2, 'idle')">Idle</button>
+    <button class="state-btn" onclick="toggleState(2, 'dismiss')">Dismiss</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="status-bar"></div>
+    <div class="phone-screen" style="position: relative;">
+      <div style="padding: var(--sp-40) var(--sp-24); text-align: center;">
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: #E8F5E9; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--sp-24);">
+          <svg width="36" height="36" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="var(--positive)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 style="font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--sp-8); letter-spacing: -0.02em;">Conta criada</h2>
+        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 260px; margin: 0 auto;">Tudo pronto. Sua conta Mercado Pago ja esta funcionando.</p>
+      </div>
+
+      <div class="bottom-sheet-overlay" id="p2-idle">
+        <div class="bottom-sheet">
+          <div class="handle"></div>
+          <div style="display: flex; align-items: flex-start; gap: var(--sp-16); margin-bottom: var(--sp-20);">
+            <div style="width: 44px; height: 44px; border-radius: var(--radius-btn); background: linear-gradient(135deg, #E8EAFF, #F0EEFF); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="var(--accent-loud)" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M2 17l10 5 10-5" stroke="var(--accent-loud)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12l10 5 10-5" stroke="var(--accent-loud)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: var(--sp-4);">Sua conta tambem recebe pagamentos</h3>
+              <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">Pix, link e maquininha. Tudo com seu CPF, sem precisar de CNPJ.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: var(--sp-8); margin-bottom: var(--sp-24);">
+            <div style="flex: 1; background: var(--surface); border-radius: var(--radius-sm); padding: var(--sp-12) var(--sp-8); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><rect x="3" y="3" width="18" height="18" rx="4" stroke="var(--accent-ui)" stroke-width="1.5"/><path d="M8 12h3v3H8z" fill="var(--accent-ui)"/></svg>
+              <p style="font-size: 11px; font-weight: 600; color: var(--text-primary);">Pix</p>
+              <p style="font-size: 10px; color: var(--text-secondary);">Na hora</p>
+            </div>
+            <div style="flex: 1; background: var(--surface); border-radius: var(--radius-sm); padding: var(--sp-12) var(--sp-8); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="var(--accent-ui)" stroke-width="1.5" stroke-linecap="round"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="var(--accent-ui)" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <p style="font-size: 11px; font-weight: 600; color: var(--text-primary);">Link</p>
+              <p style="font-size: 10px; color: var(--text-secondary);">Compartilha</p>
+            </div>
+            <div style="flex: 1; background: var(--surface); border-radius: var(--radius-sm); padding: var(--sp-12) var(--sp-8); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><rect x="4" y="2" width="16" height="20" rx="3" stroke="var(--accent-ui)" stroke-width="1.5"/><path d="M9 18h6" stroke="var(--accent-ui)" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <p style="font-size: 11px; font-weight: 600; color: var(--text-primary);">Point</p>
+              <p style="font-size: 10px; color: var(--text-secondary);">Presencial</p>
+            </div>
+          </div>
+          <button class="btn-loud" style="margin-bottom: var(--sp-12);">Ativar agora</button>
+          <button class="btn-mute" onclick="toggleState(2, 'dismiss')">Guardar pra depois</button>
+        </div>
+      </div>
+
+      <div id="p2-dismiss" style="display: none;">
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: var(--sp-16) var(--sp-24) var(--sp-32);">
+          <button class="btn-loud" style="margin-bottom: var(--sp-12);">Ir para a conta</button>
+          <div style="display: flex; align-items: center; justify-content: center; gap: var(--sp-8); padding: var(--sp-8);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M9 10h6M9 14h3" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span style="font-size: 12px; color: var(--text-secondary);">Vendas guardado em Perfil > Servicos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSTA 3: SWITCH "RECEBER PAGAMENTOS" -->
+<section class="proposal-panel" id="proposal-3">
+  <div class="meta-card">
+    <p class="label concept">Conceito</p>
+    <p>Dentro das configuracoes da conta, "Receber pagamentos" aparece como um switch desligado. Micro-compromisso maximo: basta um toque para ativar. Sem tela dedicada, sem pressao. A capacidade de venda eh tratada como uma configuracao, nao uma decisao de vida.</p>
+    <p class="label racional">Racional de Negocio</p>
+    <p>Switches tem affordance de reversibilidade: o usuario sabe que pode desligar. Isso reduz a barreira psicologica ("e se eu nao quiser mais?"). Pattern de "progressive feature unlock" usado por Nubank e Revolut. Conversao estimada 2-3x maior que tela de decisao binaria para usuarios de baixa intencao. Componente switch e expandable section do Andes X nunca usados nas propostas anteriores.</p>
+    <p class="label states">Estados</p>
+    <p>Idle: switch off, descricao compacta. On: switch ativa com micro-celebracao. Expandable section revela mais info sem sair da tela.</p>
+  </div>
+
+  <div class="state-toggle">
+    <button class="state-btn active" onclick="toggleState(3, 'idle')">Idle (off)</button>
+    <button class="state-btn" onclick="toggleState(3, 'on')">Ativado (on)</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="status-bar"></div>
+    <div class="phone-screen">
+      <div class="andes-navbar">
+        <div class="back-arrow"><svg fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="nav-title">Sua conta</span>
+      </div>
+
+      <div style="padding: var(--sp-16) var(--sp-24);">
+        <div style="display: flex; align-items: center; gap: var(--sp-16); padding-bottom: var(--sp-24); border-bottom: 1px solid var(--gray-20); margin-bottom: var(--sp-24);">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent-loud); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 700;">M</div>
+          <div>
+            <p style="font-size: 16px; font-weight: 600;">Marina Costa</p>
+            <p style="font-size: 13px; color: var(--text-secondary);">marina.costa@email.com</p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--sp-8);">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--sp-16) 0; border-bottom: 1px solid var(--gray-20);">
+            <div style="display: flex; align-items: center; gap: var(--sp-12);">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 008.43 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 8.43a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="var(--text-secondary)" stroke-width="1.5"/></svg>
+              <span style="font-size: 14px;">Dados pessoais</span>
+            </div>
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--sp-16) 0; border-bottom: 1px solid var(--gray-20);">
+            <div style="display: flex; align-items: center; gap: var(--sp-12);">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="var(--text-secondary)" stroke-width="1.5"/></svg>
+              <span style="font-size: 14px;">Seguranca</span>
+            </div>
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--sp-8);">
+          <p style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--sp-16);">Servicos</p>
+
+          <div id="p3-idle">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-16); padding: var(--sp-16) 0;">
+              <div style="flex: 1;">
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--sp-4);">Receber pagamentos</p>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Ative para cobrar por Pix, link ou maquininha usando seu CPF. Desative quando quiser.</p>
+              </div>
+              <button class="andes-switch" onclick="toggleState(3, 'on')" aria-label="Ativar recebimento de pagamentos"></button>
+            </div>
+
+            <div class="expandable" onclick="this.classList.toggle('open')">
+              <div class="expandable-header">
+                <span class="exp-title" style="font-size: 13px; color: var(--accent-loud);">Como funciona?</span>
+                <svg class="chevron" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="expandable-body">
+                <div style="padding-bottom: var(--sp-16);">
+                  <div style="display: flex; gap: var(--sp-12); margin-bottom: var(--sp-12);">
+                    <div style="width: 4px; border-radius: 2px; background: var(--accent-loud); flex-shrink: 0;"></div>
+                    <div>
+                      <p style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Sem taxa para ativar</p>
+                      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Voce so paga quando recebe um pagamento.</p>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: var(--sp-12); margin-bottom: var(--sp-12);">
+                    <div style="width: 4px; border-radius: 2px; background: var(--accent-loud); flex-shrink: 0;"></div>
+                    <div>
+                      <p style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Dinheiro na conta na hora</p>
+                      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Recebimentos via Pix caem instantaneamente.</p>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: var(--sp-12);">
+                    <div style="width: 4px; border-radius: 2px; background: var(--accent-loud); flex-shrink: 0;"></div>
+                    <div>
+                      <p style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Reversivel</p>
+                      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Desative a qualquer momento, aqui mesmo.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="p3-on" style="display: none;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-16); padding: var(--sp-16) 0;">
+              <div style="flex: 1;">
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--sp-4);">Receber pagamentos</p>
+                <p style="font-size: 12px; color: var(--positive); line-height: 1.4; font-weight: 500;">Ativo -- Voce ja pode receber pagamentos</p>
+              </div>
+              <button class="andes-switch on" onclick="toggleState(3, 'idle')" aria-label="Desativar"></button>
+            </div>
+            <div style="background: #E8F5E9; border-radius: var(--radius-btn); padding: var(--sp-16); display: flex; align-items: flex-start; gap: var(--sp-12); margin-top: var(--sp-8); animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 1px;"><path d="M5 13l4 4L19 7" stroke="var(--positive)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div>
+                <p style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--sp-4);">Pronto. Vendas ativadas.</p>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Acesse Cobrar na home para criar seu primeiro link ou QR Pix.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--sp-24); border-top: 1px solid var(--gray-20); padding-top: var(--sp-16);">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--sp-16) 0;">
+            <div style="display: flex; align-items: center; gap: var(--sp-12);">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M13.73 21a2 2 0 01-3.46 0" stroke="var(--text-secondary)" stroke-width="1.5"/></svg>
+              <span style="font-size: 14px;">Notificacoes</span>
+            </div>
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSTA 4: DESAFIO 7 DIAS -->
+<section class="proposal-panel" id="proposal-4">
+  <div class="meta-card">
+    <p class="label concept">Conceito</p>
+    <p>Transforma a ativacao de vendas em um "desafio de 7 dias" com 3 micro-passos (criar Pix, compartilhar, receber). Barra de progresso e celebracoes a cada etapa. Enquadramento de "desafio" cria urgencia e commitment sem pressao comercial.</p>
+    <p class="label racional">Racional de Negocio</p>
+    <p>Gamificacao leve (goal-gradient effect) aumenta completude de onboarding em 34% (Nunes & Dreze). A deadline de 7 dias cria urgencia sem agressividade. O framing de "desafio" reposiciona de "decisao de negocio" para "experimentacao sem risco". Cada micro-passo gera investimento incremental (IKEA effect). Metricas: completion rate dos 3 passos, tempo ate primeira venda.</p>
+    <p class="label states">Estados</p>
+    <p>Idle: desafio apresentado, 0/3. Progress: passo 1 completo, celebracao inline. Dismiss: colapsa para chip na home.</p>
+  </div>
+
+  <div class="state-toggle">
+    <button class="state-btn active" onclick="toggleState(4, 'idle')">Idle (0/3)</button>
+    <button class="state-btn" onclick="toggleState(4, 'progress')">Progresso (1/3)</button>
+    <button class="state-btn" onclick="toggleState(4, 'dismiss')">Dismiss</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="status-bar"></div>
+    <div class="phone-screen" style="position: relative;">
+
+      <div id="p4-idle">
+        <div class="andes-navbar">
+          <div class="back-arrow"><svg fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div style="padding: var(--sp-24);">
+          <div style="text-align: center; margin-bottom: var(--sp-32);">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #E8EAFF 0%, #F5F0FF 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--sp-16);">
+              <svg width="40" height="40" fill="none" viewBox="0 0 48 48"><path d="M24 4l4.5 9.5L39 15l-7.5 7 2 10.5L24 27.5l-9.5 5L16.5 22 9 15l10.5-1.5L24 4z" fill="var(--brand-yellow)" stroke="var(--accent-loud)" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </div>
+            <h2 style="font-size: 22px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: var(--sp-8);">Sua primeira venda em 7 dias</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">3 passos simples. Sem compromisso.<br>Se nao gostar, e so parar.</p>
+          </div>
+          <div style="margin-bottom: var(--sp-32);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: var(--sp-8);">
+              <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">0 de 3 passos</span>
+              <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">7 dias</span>
+            </div>
+            <div style="height: 6px; background: var(--gray-20); border-radius: 3px; overflow: hidden;">
+              <div style="width: 0%; height: 100%; background: var(--accent-loud); border-radius: 3px;"></div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--sp-16);">
+            <div style="display: flex; gap: var(--sp-16); align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent-loud); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 700; color: var(--accent-loud);">1</div>
+              <div style="flex: 1; padding-top: var(--sp-4);">
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Crie seu Pix de cobranca</p>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Defina um valor e gere um QR. Leva 30 segundos.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--sp-16); align-items: flex-start; opacity: 0.5;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--gray-20); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 700; color: var(--text-secondary);">2</div>
+              <div style="flex: 1; padding-top: var(--sp-4);">
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Compartilhe com alguem</p>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Mande por WhatsApp ou onde preferir.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--sp-16); align-items: flex-start; opacity: 0.5;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--gray-20); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 700; color: var(--text-secondary);">3</div>
+              <div style="flex: 1; padding-top: var(--sp-4);">
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Receba seu primeiro pagamento</p>
+                <p style="font-size: 12px; color: var(--text-secondary);">O dinheiro cai na sua conta na hora.</p>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: var(--sp-32);">
+            <button class="btn-loud" style="margin-bottom: var(--sp-12);">Comecar o desafio</button>
+            <button class="btn-mute">Agora nao</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="p4-progress" style="display: none;">
+        <div class="andes-navbar">
+          <div class="back-arrow"><svg fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div style="padding: var(--sp-24);">
+          <div style="text-align: center; margin-bottom: var(--sp-24);">
+            <h2 style="font-size: 22px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: var(--sp-8);">Sua primeira venda em 7 dias</h2>
+          </div>
+          <div style="margin-bottom: var(--sp-32);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: var(--sp-8);">
+              <span style="font-size: 12px; font-weight: 600; color: var(--accent-loud);">1 de 3 passos</span>
+              <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">6 dias restantes</span>
+            </div>
+            <div style="height: 6px; background: var(--gray-20); border-radius: 3px; overflow: hidden;">
+              <div style="width: 33%; height: 100%; background: var(--accent-loud); border-radius: 3px;"></div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--sp-16);">
+            <div style="display: flex; gap: var(--sp-16); align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--positive); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="18" height="18" fill="none"><path d="M4 9l4 4L16 5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="flex: 1; padding-top: var(--sp-4);">
+                <p style="font-size: 14px; font-weight: 600; color: var(--positive); margin-bottom: 2px;">Pix de cobranca criado</p>
+                <p style="font-size: 12px; color: var(--text-secondary); text-decoration: line-through;">Defina um valor e gere um QR.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--sp-16); align-items: flex-start; background: var(--surface); margin: 0 -16px; padding: var(--sp-16); border-radius: var(--radius-btn);">
+              <div style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent-loud); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 700; color: var(--accent-loud); background: #fff;">2</div>
+              <div style="flex: 1; padding-top: var(--sp-4);">
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Compartilhe com alguem</p>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-bottom: var(--sp-12);">Mande por WhatsApp ou onde preferir.</p>
+                <button class="btn-loud btn-small" style="width: auto; padding: 2px 20px;">Compartilhar</button>
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--sp-16); align-items: flex-start; opacity: 0.45;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--gray-20); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 700; color: var(--text-secondary);">3</div>
+              <div style="flex: 1; padding-top: var(--sp-4);">
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">Receba seu primeiro pagamento</p>
+                <p style="font-size: 12px; color: var(--text-secondary);">O dinheiro cai na sua conta na hora.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="andes-snackbar" style="background: var(--positive);">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4l-6.4 4.8L8 14l-6-4.8h7.6L12 2z" fill="#fff"/></svg>
+          <span class="snack-text" style="color: #fff;">Passo 1 concluido. Voce esta indo bem.</span>
+        </div>
+      </div>
+
+      <div id="p4-dismiss" style="display: none;">
+        <div class="andes-navbar">
+          <div class="back-arrow"><svg fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div style="padding: var(--sp-16) var(--sp-24);">
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">Ola,</p>
+          <p style="font-size: 20px; font-weight: 600; margin-bottom: var(--sp-24);">Marina</p>
+          <div style="display: inline-flex; align-items: center; gap: var(--sp-8); background: var(--surface); border-radius: 20px; padding: var(--sp-8) var(--sp-16); cursor: pointer;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4l-6.4 4.8L8 14l-6-4.8h7.6L12 2z" fill="var(--accent-loud)"/></svg>
+            <span style="font-size: 12px; font-weight: 600; color: var(--accent-loud);">Desafio de vendas</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">0/3</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-secondary); margin-top: var(--sp-12);">O desafio fica aqui na home. Comece quando quiser.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSTA 5: WHATSAPP COMMERCE HOOK -->
+<section class="proposal-panel" id="proposal-5">
+  <div class="meta-card">
+    <p class="label concept">Conceito</p>
+    <p>Ancora a ativacao de vendas no comportamento cotidiano: mandar mensagem no WhatsApp. Nao fala de "vender" -- fala de "cobrar um amigo", "dividir a conta", "mandar um link de pagamento". A ativacao eh consequencia de uma acao pratica.</p>
+    <p class="label racional">Racional de Negocio</p>
+    <p>92% dos brasileiros usam WhatsApp diariamente. Reframing de "ativar vendas" para "cobrar pelo WhatsApp" reduz barreira psicologica: nao estou virando vendedor, estou resolvendo um problema pratico. "Cobrar amigo/dividir conta" eh o principal gatilho de primeira venda para CPFs em fintechs brasileiras. O hook do WhatsApp conecta com top-of-mind e gera distribuicao organica. Pattern nao explorado nas 13 propostas anteriores.</p>
+    <p class="label states">Estados</p>
+    <p>Idle: tela com cenarios do dia-a-dia. Interact: ao escolher cenario, preview do link no WhatsApp. Dismiss: fecha e registra para re-engagement.</p>
+  </div>
+
+  <div class="state-toggle">
+    <button class="state-btn active" onclick="toggleState(5, 'idle')">Idle</button>
+    <button class="state-btn" onclick="toggleState(5, 'interact')">Interacao</button>
+    <button class="state-btn" onclick="toggleState(5, 'dismiss')">Dismiss</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="status-bar"></div>
+    <div class="phone-screen" style="position: relative;">
+
+      <div id="p5-idle">
+        <div class="andes-navbar">
+          <div class="back-arrow"><svg fill="none" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round"/></svg></div>
+        </div>
+        <div style="padding: var(--sp-24);">
+          <div style="margin-bottom: var(--sp-32);">
+            <h2 style="font-size: 24px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.025em; margin-bottom: var(--sp-8); line-height: 1.2;">Cobre pelo WhatsApp</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">Mande um link de pagamento direto na conversa. A pessoa paga na hora e o dinheiro cai na sua conta.</p>
+          </div>
+          <p style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--sp-16);">Pra que voce precisa?</p>
+          <div style="display: flex; flex-direction: column; gap: var(--sp-12);">
+            <div onclick="toggleState(5, 'interact')" style="display: flex; align-items: center; gap: var(--sp-16); padding: var(--sp-16); background: var(--surface); border-radius: var(--radius-btn); cursor: pointer; transition: all 0.15s; border: 1.5px solid transparent;" onmouseover="this.style.borderColor='var(--accent-loud)'" onmouseout="this.style.borderColor='transparent'">
+              <span style="font-size: 28px; line-height: 1;">&#127860;</span>
+              <div>
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary);">Dividir uma conta</p>
+                <p style="font-size: 12px; color: var(--text-secondary);">Restaurante, delivery, presente...</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--sp-16); padding: var(--sp-16); background: var(--surface); border-radius: var(--radius-btn); cursor: pointer; border: 1.5px solid transparent;" onmouseover="this.style.borderColor='var(--accent-loud)'" onmouseout="this.style.borderColor='transparent'">
+              <span style="font-size: 28px; line-height: 1;">&#128176;</span>
+              <div>
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary);">Cobrar por um servico</p>
+                <p style="font-size: 12px; color: var(--text-secondary);">Aula, frete, manutencao...</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: var(--sp-16); padding: var(--sp-16); background: var(--surface); border-radius: var(--radius-btn); cursor: pointer; border: 1.5px solid transparent;" onmouseover="this.style.borderColor='var(--accent-loud)'" onmouseout="this.style.borderColor='transparent'">
+              <span style="font-size: 28px; line-height: 1;">&#128722;</span>
+              <div>
+                <p style="font-size: 14px; font-weight: 600; color: var(--text-primary);">Vender algo</p>
+                <p style="font-size: 12px; color: var(--text-secondary);">Produto, encomenda, artesanato...</p>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: var(--sp-8); margin-top: var(--sp-24); padding: var(--sp-12) var(--sp-16); background: #F0FCFF; border-radius: var(--radius-sm);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style="flex-shrink: 0;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="var(--accent-ui)" stroke-width="1.5"/><path d="M12 8v4M12 16h.01" stroke="var(--accent-ui)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Quem recebe o link paga com seguranca. Nao precisa ter conta MP.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="p5-interact" style="display: none;">
+        <div class="andes-navbar">
+          <div class="back-arrow"><svg fill="none" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="nav-title">Dividir conta</span>
+        </div>
+        <div style="padding: var(--sp-24);">
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: var(--sp-16);">Quanto quer cobrar?</p>
+          <div style="text-align: center; margin-bottom: var(--sp-32);">
+            <span style="font-size: 16px; color: var(--text-secondary); vertical-align: top;">R$</span>
+            <span style="font-size: 48px; font-weight: 700; letter-spacing: -0.03em; color: var(--text-primary);">45,00</span>
+            <div style="width: 60px; height: 2px; background: var(--accent-loud); margin: var(--sp-8) auto 0; border-radius: 1px;"></div>
+          </div>
+          <p style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--sp-12);">Preview no WhatsApp</p>
+          <div style="background: #E7FFDB; border-radius: 12px 12px 0 12px; padding: var(--sp-12); margin-bottom: var(--sp-32); max-width: 280px; margin-left: auto;">
+            <div style="background: #D4F4C7; border-radius: var(--radius-sm); padding: var(--sp-12); margin-bottom: var(--sp-8);">
+              <div style="display: flex; align-items: center; gap: var(--sp-8); margin-bottom: var(--sp-4);">
+                <div style="width: 20px; height: 20px; border-radius: 4px; background: var(--accent-ui); display: flex; align-items: center; justify-content: center;">
+                  <span style="color: #fff; font-size: 10px; font-weight: 700;">MP</span>
+                </div>
+                <span style="font-size: 11px; color: #075E54; font-weight: 500;">mercadopago.com.br</span>
+              </div>
+              <p style="font-size: 13px; font-weight: 600; color: #111;">Pagar R$ 45,00</p>
+              <p style="font-size: 11px; color: #555;">Pague com Pix, cartao ou saldo MP</p>
+            </div>
+            <p style="font-size: 13px; color: #111;">Oi! Manda os R$ 45 da janta de ontem? Segue o link :)</p>
+            <p style="font-size: 10px; color: #7C8B7A; text-align: right; margin-top: 4px;">14:32 &#10003;&#10003;</p>
+          </div>
+          <button class="btn-loud" style="margin-bottom: var(--sp-8);">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style="margin-right: 8px;"><path d="M22 2L11 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2l-7 20-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+            Mandar no WhatsApp
+          </button>
+          <button class="btn-mute">Copiar link</button>
+        </div>
+      </div>
+
+      <div id="p5-dismiss" style="display: none;">
+        <div style="padding: var(--sp-40) var(--sp-24); text-align: center;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--sp-16);">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="var(--positive)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: var(--sp-8);">Tudo bem</h3>
+          <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">Quando precisar cobrar alguem, procure <strong>Cobrar</strong> no menu da home.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROPOSTA 6: COACH MARK "DESCUBRA VENDAS" -->
+<section class="proposal-panel" id="proposal-6">
+  <div class="meta-card">
+    <p class="label concept">Conceito</p>
+    <p>Em vez de tela de bifurcacao, o convite para vendas aparece como sequencia de coach marks (tooltips educativos) sobrepostos a home real. Cada tooltip aponta para um elemento existente, revelando que o usuario ja pode cobrar. Zero tela nova. Zero decisao. Apenas descoberta guiada.</p>
+    <p class="label racional">Racional de Negocio</p>
+    <p>Coach marks tem a maior taxa de engajamento entre padroes de feature discovery (Appcues benchmark: 3.2x vs modals). Ao apontar para elementos existentes, o usuario percebe que vendas ja esta la -- nao eh algo que precisa "ativar". Elimina completamente a barreira de decisao. Componente coach mark do Andes X nunca usado nas 13 propostas anteriores.</p>
+    <p class="label states">Estados</p>
+    <p>Coach 1/2: sobre botao "Cobrar" na home. Coach 2/2: sobre saldo, "tudo no mesmo lugar". Dismiss: home limpa, sequencia acessivel via Dicas nas configuracoes.</p>
+  </div>
+
+  <div class="state-toggle">
+    <button class="state-btn active" onclick="toggleState(6, 'idle')">Coach 1/2</button>
+    <button class="state-btn" onclick="toggleState(6, 'step2')">Coach 2/2</button>
+    <button class="state-btn" onclick="toggleState(6, 'dismiss')">Dismiss</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="status-bar"></div>
+    <div class="phone-screen" style="position: relative; overflow: hidden;">
+      <div style="padding: 0 var(--sp-16);">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--sp-16) 0 var(--sp-8);">
+          <div>
+            <p style="font-size: 14px; color: var(--text-secondary);">Ola,</p>
+            <p style="font-size: 20px; font-weight: 600;">Marina</p>
+          </div>
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" fill="none" stroke="var(--text-secondary)" stroke-width="2"><circle cx="10" cy="10" r="4"/><path d="M2 18c0-3.3 2.7-6 6-6h4c3.3 0 6 2.7 6 6"/></svg>
+          </div>
+        </div>
+        <div style="background: var(--surface); border-radius: var(--radius-section); padding: var(--sp-24); margin-bottom: var(--sp-16); position: relative;">
+          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--sp-4);">Seu saldo</p>
+          <p style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">R$ 1.240,00</p>
+          <div style="display: flex; gap: var(--sp-12); margin-top: var(--sp-16);">
+            <div style="flex: 1; background: var(--background); border-radius: var(--radius-btn); padding: var(--sp-12); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><path d="M12 5v14M5 12h14" stroke="var(--accent-loud)" stroke-width="2" stroke-linecap="round"/></svg>
+              <p style="font-size: 11px; font-weight: 500;">Adicionar</p>
+            </div>
+            <div style="flex: 1; background: var(--background); border-radius: var(--radius-btn); padding: var(--sp-12); text-align: center;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><path d="M5 12h14M12 5l7 7-7 7" stroke="var(--accent-loud)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <p style="font-size: 11px; font-weight: 500;">Transferir</p>
+            </div>
+            <div style="flex: 1; background: var(--background); border-radius: var(--radius-btn); padding: var(--sp-12); text-align: center; position: relative;">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style="margin-bottom: 4px;"><rect x="3" y="6" width="18" height="12" rx="2" stroke="var(--accent-loud)" stroke-width="2"/><path d="M3 10h18" stroke="var(--accent-loud)" stroke-width="2"/></svg>
+              <p style="font-size: 11px; font-weight: 500;">Cobrar</p>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: var(--sp-12); margin-bottom: var(--sp-24); flex-wrap: wrap;">
+          <div style="background: var(--surface); border-radius: var(--radius-btn); padding: var(--sp-12) var(--sp-16); display: flex; align-items: center; gap: var(--sp-8);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M8 12h3v3H8z" fill="var(--text-secondary)"/></svg>
+            <span style="font-size: 12px; font-weight: 500;">Pix</span>
+          </div>
+          <div style="background: var(--surface); border-radius: var(--radius-btn); padding: var(--sp-12) var(--sp-16); display: flex; align-items: center; gap: var(--sp-8);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M2 10h20" stroke="var(--text-secondary)" stroke-width="1.5"/></svg>
+            <span style="font-size: 12px; font-weight: 500;">Cartao</span>
+          </div>
+          <div style="background: var(--surface); border-radius: var(--radius-btn); padding: var(--sp-12) var(--sp-16); display: flex; align-items: center; gap: var(--sp-8);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M6 2l12 0v20l-6-4-6 4V2z" stroke="var(--text-secondary)" stroke-width="1.5"/></svg>
+            <span style="font-size: 12px; font-weight: 500;">Pagar</span>
+          </div>
+        </div>
+        <p style="font-size: 16px; font-weight: 600; margin-bottom: var(--sp-12);">Atividade recente</p>
+        <div style="display: flex; align-items: center; gap: var(--sp-12); padding: var(--sp-12) 0; border-bottom: 1px solid var(--gray-20);">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #E8F5E9; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" fill="none"><path d="M9 2v14M2 9l7-7 7 7" stroke="var(--positive)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="flex: 1;">
+            <p style="font-size: 14px; font-weight: 500;">Pix recebido</p>
+            <p style="font-size: 12px; color: var(--text-secondary);">Carlos S. -- ontem</p>
+          </div>
+          <p style="font-size: 14px; font-weight: 600; color: var(--positive);">+ R$ 150</p>
+        </div>
+      </div>
+
+      <!-- Coach Mark 1/2 -->
+      <div id="p6-idle" style="position: absolute; inset: 0; z-index: 15;">
+        <div style="position: absolute; inset: 0; background: rgba(13,13,27,0.65);"></div>
+        <!-- Spotlight cutout effect via box-shadow trick on the target area -->
+        <div style="position: absolute; top: 195px; right: 20px; width: 100px; height: 64px; border-radius: var(--radius-btn); box-shadow: 0 0 0 2000px rgba(13,13,27,0.65); z-index: 1; background: transparent;"></div>
+        <div class="coach-mark" style="top: 275px; left: 24px; right: 24px;">
+          <div class="coach-bubble arrow-top">
+            <p style="font-weight: 600; margin-bottom: 4px;">Sabia que voce ja pode cobrar?</p>
+            <p style="opacity: 0.8; font-size: 12px; line-height: 1.4;">Toque em <strong>Cobrar</strong> para criar um Pix ou link de pagamento. O dinheiro cai aqui, na sua conta.</p>
+            <div class="coach-step">
+              <div class="dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+              </div>
+              <div style="display: flex; gap: var(--sp-12);">
+                <button style="color: rgba(255,255,255,0.5); background: none; border: none; font-family: var(--font); font-size: 13px; cursor: pointer;" onclick="toggleState(6, 'dismiss')">Pular</button>
+                <button onclick="toggleState(6, 'step2')">Continuar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coach Mark 2/2 -->
+      <div id="p6-step2" style="position: absolute; inset: 0; z-index: 15; display: none;">
+        <div style="position: absolute; inset: 0; background: rgba(13,13,27,0.65);"></div>
+        <div style="position: absolute; top: 80px; left: 20px; right: 20px; height: 76px; border-radius: var(--radius-section); box-shadow: 0 0 0 2000px rgba(13,13,27,0.65); z-index: 1; background: transparent;"></div>
+        <div class="coach-mark" style="top: 172px; left: 24px; right: 24px;">
+          <div class="coach-bubble arrow-top">
+            <p style="font-weight: 600; margin-bottom: 4px;">Tudo no mesmo saldo</p>
+            <p style="opacity: 0.8; font-size: 12px; line-height: 1.4;">Pagamentos que voce recebe caem aqui, junto com seu saldo pessoal. Uma conta so, sem complicacao.</p>
+            <div class="coach-step">
+              <div class="dots">
+                <div class="dot"></div>
+                <div class="dot active"></div>
+              </div>
+              <button onclick="toggleState(6, 'dismiss')">Comecar a cobrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function showProposal(n) {
+    document.querySelectorAll('.proposal-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('proposal-' + n).classList.add('active');
+    document.querySelectorAll('.tab-btn')[n - 1].classList.add('active');
+    resetStates(n);
+  }
+
+  function toggleState(proposal, state) {
+    var panel = document.getElementById('proposal-' + proposal);
+    panel.querySelectorAll('.state-btn').forEach(function(b) { b.classList.remove('active'); });
+    if (event && event.target) event.target.classList.add('active');
+
+    switch(proposal) {
+      case 1:
+        document.getElementById('p1-idle').style.display = state === 'idle' ? 'flex' : 'none';
+        document.getElementById('p1-dismiss').style.display = state === 'dismiss' ? 'flex' : 'none';
+        break;
+      case 2:
+        document.getElementById('p2-idle').style.display = state === 'idle' ? 'flex' : 'none';
+        document.getElementById('p2-dismiss').style.display = state === 'dismiss' ? 'block' : 'none';
+        break;
+      case 3:
+        document.getElementById('p3-idle').style.display = state === 'idle' ? 'block' : 'none';
+        document.getElementById('p3-on').style.display = state === 'on' ? 'block' : 'none';
+        break;
+      case 4:
+        document.getElementById('p4-idle').style.display = state === 'idle' ? 'block' : 'none';
+        document.getElementById('p4-progress').style.display = state === 'progress' ? 'block' : 'none';
+        document.getElementById('p4-dismiss').style.display = state === 'dismiss' ? 'block' : 'none';
+        break;
+      case 5:
+        document.getElementById('p5-idle').style.display = state === 'idle' ? 'block' : 'none';
+        document.getElementById('p5-interact').style.display = state === 'interact' ? 'block' : 'none';
+        document.getElementById('p5-dismiss').style.display = state === 'dismiss' ? 'block' : 'none';
+        break;
+      case 6:
+        document.getElementById('p6-idle').style.display = state === 'idle' ? 'block' : 'none';
+        document.getElementById('p6-step2').style.display = state === 'step2' ? 'block' : 'none';
+        if (state === 'dismiss') {
+          document.getElementById('p6-idle').style.display = 'none';
+          document.getElementById('p6-step2').style.display = 'none';
+        }
+        break;
+    }
+  }
+
+  function resetStates(n) {
+    switch(n) {
+      case 1: document.getElementById('p1-idle').style.display = 'flex'; document.getElementById('p1-dismiss').style.display = 'none'; break;
+      case 2: document.getElementById('p2-idle').style.display = 'flex'; document.getElementById('p2-dismiss').style.display = 'none'; break;
+      case 3: document.getElementById('p3-idle').style.display = 'block'; document.getElementById('p3-on').style.display = 'none'; break;
+      case 4: document.getElementById('p4-idle').style.display = 'block'; document.getElementById('p4-progress').style.display = 'none'; document.getElementById('p4-dismiss').style.display = 'none'; break;
+      case 5: document.getElementById('p5-idle').style.display = 'block'; document.getElementById('p5-interact').style.display = 'none'; document.getElementById('p5-dismiss').style.display = 'none'; break;
+      case 6: document.getElementById('p6-idle').style.display = 'block'; document.getElementById('p6-step2').style.display = 'none'; break;
+    }
+    var panel = document.getElementById('proposal-' + n);
+    var btns = panel.querySelectorAll('.state-btn');
+    btns.forEach(function(b, i) { b.classList.remove('active'); if (i === 0) b.classList.add('active'); });
+  }
+</script>
+
+</body>
+</html>
