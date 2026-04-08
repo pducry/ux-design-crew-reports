@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benchmark Criativo em Onboarding Fintech — UX Design Crew</title>
+  <style>
+    /* ===== RESET ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ===== BASE ===== */
+    :root {
+      --mp-yellow: #FFE600;
+      --mp-blue: #009EE3;
+      --mp-dark: #1a1a2e;
+      --mp-cyan: #00BCFF;
+      --gray-50: #fafafa;
+      --gray-100: #f5f5f5;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --green: #15803d;
+      --green-bg: #d1fae5;
+      --amber: #b45309;
+      --amber-bg: #fff3cd;
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+      --blue-bg: #e0f2fe;
+      --blue-text: #0369a1;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--mp-dark);
+      background: var(--gray-50);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, var(--mp-blue) 0%, #0077b6 100%);
+      color: white;
+      padding: 56px 0 36px;
+    }
+    header h1 { font-size: 30px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    header .subtitle { font-size: 16px; opacity: 0.85; margin-bottom: 20px; max-width: 700px; }
+    .meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px; }
+    .meta span { background: rgba(255,255,255,0.18); padding: 4px 14px; border-radius: 16px; backdrop-filter: blur(4px); }
+
+    /* ===== NAV ===== */
+    nav {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 10px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    nav .container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+    nav a {
+      text-decoration: none;
+      color: var(--gray-600);
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    nav a:hover { background: var(--mp-blue); color: white; }
+
+    /* ===== SECTIONS ===== */
+    section {
+      background: white;
+      margin: 24px 0;
+      border-radius: var(--radius);
+      padding: 36px;
+      box-shadow: var(--shadow);
+    }
+    .section-number {
+      font-size: 11px;
+      color: var(--mp-blue);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--mp-dark);
+    }
+    section .section-intro {
+      color: var(--gray-500);
+      font-size: 14px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--gray-200);
+      padding-bottom: 16px;
+    }
+    section h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: var(--gray-800); }
+    section h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: var(--gray-700); }
+    section p { margin-bottom: 12px; color: var(--gray-700); }
+    section ul, section ol { margin: 12px 0 12px 24px; color: var(--gray-700); }
+    section li { margin-bottom: 6px; }
+
+    /* ===== TABLES ===== */
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    th { background: var(--gray-100); text-align: left; padding: 10px 14px; font-weight: 600; border-bottom: 2px solid var(--gray-200); font-size: 13px; }
+    td { padding: 10px 14px; border-bottom: 1px solid #eee; }
+    tr:nth-child(even) td { background: #fcfcfc; }
+
+    /* ===== TAGS ===== */
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag-green { background: var(--green-bg); color: var(--green); }
+    .tag-amber { background: var(--amber-bg); color: var(--amber); }
+    .tag-red { background: var(--red-bg); color: var(--red); }
+    .tag-blue { background: var(--blue-bg); color: var(--blue-text); }
+    .tag-gray { background: var(--gray-100); color: var(--gray-600); }
+    .tag-yellow { background: #fef9c3; color: #854d0e; }
+
+    .rice-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--mp-blue);
+      color: white;
+      padding: 3px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 16px 0;
+      background: white;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+    .card h4 { margin: 0 0 4px; font-size: 16px; }
+    .card .card-sub { font-size: 13px; color: var(--gray-500); margin-bottom: 12px; }
+
+    .player-card {
+      border-left: 4px solid var(--mp-blue);
+    }
+    .player-card.highlight { border-left-color: var(--mp-yellow); }
+
+    /* ===== PROPOSAL CARDS ===== */
+    .proposal {
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin: 20px 0;
+      position: relative;
+    }
+    .proposal-number {
+      position: absolute;
+      top: -14px;
+      left: 20px;
+      background: var(--mp-blue);
+      color: white;
+      padding: 4px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .proposal h4 { font-size: 18px; margin-top: 8px; }
+    .proposal-meta { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+    .editorial-note {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 14px 0;
+      font-size: 13px;
+      color: #5d4037;
+    }
+    .editorial-note strong { color: #e65100; }
+    .proposal-iframe-wrapper {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 16px 0;
+      background: var(--gray-50);
+    }
+    .proposal-iframe-wrapper iframe {
+      width: 100%;
+      height: 700px;
+      border: none;
+    }
+
+    /* ===== TRACEABILITY ===== */
+    .trace-chain {
+      background: #f8fafc;
+      border-left: 3px solid var(--mp-blue);
+      padding: 18px 22px;
+      margin: 14px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+    }
+    .trace-step { margin: 5px 0; padding-left: 16px; color: var(--gray-700); }
+    .trace-step::before { content: "\2192 "; color: var(--mp-blue); font-weight: 700; }
+
+    /* ===== SCORECARD ===== */
+    .score-cell { text-align: center; font-weight: 600; }
+    .score-high { color: var(--green); }
+    .score-mid { color: var(--amber); }
+    .score-low { color: var(--red); }
+    .score-indicator { font-size: 16px; }
+
+    /* ===== QUALITY WARNING ===== */
+    .quality-warning {
+      background: #fff8e1;
+      border: 1px solid #ffcc02;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      color: #7a6200;
+      font-size: 14px;
+    }
+
+    /* ===== MATRIX ===== */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .matrix-quadrant {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .matrix-quadrant h4 { margin: 0 0 12px; font-size: 14px; }
+    .matrix-quadrant.q1 { border-color: var(--green); background: #f0fdf4; }
+    .matrix-quadrant.q2 { border-color: var(--mp-blue); background: #eff6ff; }
+    .matrix-quadrant.q3 { border-color: var(--gray-300); background: var(--gray-50); }
+
+    /* ===== TIMELINE ===== */
+    .iteration-timeline { margin: 20px 0; }
+    .iteration {
+      border-left: 3px solid var(--mp-blue);
+      padding: 16px 24px;
+      margin-left: 12px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .iteration::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 20px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--mp-blue);
+    }
+    .iteration h4 { font-size: 15px; margin-bottom: 8px; }
+
+    /* ===== COLLAPSIBLE ===== */
+    details { margin: 8px 0; }
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--mp-blue);
+      padding: 8px 0;
+      user-select: none;
+    }
+    details summary:hover { color: #0077b6; }
+    details[open] summary { margin-bottom: 12px; }
+
+    /* ===== HYPOTHESIS ===== */
+    .hypothesis-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 16px 0;
+      background: linear-gradient(to right, #f0f9ff 0%, white 40%);
+    }
+    .hypothesis-card h4 { color: var(--mp-blue); margin: 0 0 10px; }
+    .hypothesis-statement {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    .hypothesis-statement strong { color: var(--mp-blue); }
+    .edge-cases {
+      background: #fef3c7;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+    .edge-cases strong { color: var(--amber); }
+
+    /* ===== EXECUTIVE SUMMARY ===== */
+    .exec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+    .exec-box {
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .exec-box.findings { background: #fef2f2; border: 1px solid #fecaca; }
+    .exec-box.opportunities { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .exec-box h4 { margin-bottom: 12px; }
+    .exec-box li { font-size: 14px; }
+
+    /* ===== FOOTER ===== */
+    footer { text-align: center; padding: 36px 0; color: var(--gray-400); font-size: 13px; }
+    footer a { color: var(--mp-blue); text-decoration: none; }
+
+    /* ===== PRINT ===== */
+    @media print {
+      nav { display: none; }
+      section { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+      header { background: var(--mp-blue) !important; -webkit-print-color-adjust: exact; }
+      body { font-size: 12px; }
+      .proposal-iframe-wrapper { display: none; }
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 640px) {
+      header h1 { font-size: 22px; }
+      section { padding: 20px 16px; margin: 16px 0; }
+      nav a { font-size: 11px; padding: 4px 10px; }
+      .exec-grid, .matrix-grid { grid-template-columns: 1fr; }
+      .card { padding: 16px; }
+      table { font-size: 12px; }
+      th, td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- HEADER                                                        -->
+<!-- ============================================================ -->
+<header>
+  <div class="container">
+    <h1>Benchmark Criativo em Onboarding Fintech</h1>
+    <p class="subtitle">Pesquisa de gaps e oportunidades de evolucao no nivel criativo do onboarding Mercado Pago -- storytelling, personalizacao visual, micro-interacoes e identidade de marca.</p>
+    <div class="meta">
+      <span>2026-04-08</span>
+      <span>Tipo: Problema</span>
+      <span>Escopo: Jornada (onboarding completo)</span>
+      <span>Foco: Marca / Identidade Criativa</span>
+      <span>2 rodadas de iteracao</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- NAV                                                           -->
+<!-- ============================================================ -->
+<nav>
+  <div class="container">
+    <a href="#sumario">Sumario</a>
+    <a href="#commodity">Padroes Commodity</a>
+    <a href="#benchmark">Benchmark (10)</a>
+    <a href="#estados-ui">Estados UI</a>
+    <a href="#tendencias">Tendencias</a>
+    <a href="#gap-analysis">Gap Analysis</a>
+    <a href="#propostas">Propostas Visuais</a>
+    <a href="#estrategia">Estrategia</a>
+    <a href="#scorecard">Avaliacao Critico</a>
+    <a href="#iteracoes">Iteracoes</a>
+  </div>
+</nav>
+
+<main class="container">
+
+<!-- ============================================================ -->
+<!-- SECAO 1: SUMARIO EXECUTIVO                                    -->
+<!-- ============================================================ -->
+<section id="sumario">
+  <div class="section-number">Secao 1</div>
+  <h2>Sumario Executivo</h2>
+  <p class="section-intro">Sintese dos achados mais relevantes da pesquisa de benchmark criativo em onboarding fintech, com foco em oportunidades para o Mercado Pago.</p>
+
+  <div class="exec-grid">
+    <div class="exec-box findings">
+      <h4>Top 3 Achados</h4>
+      <ol>
+        <li><strong>Onboarding generico virou commodity:</strong> ~90% das fintechs usam a mesma formula (fundo branco + ilustracao flat + carousel 3-4 telas + copy "Crie sua conta gratis"). Nao ha diferenciacao.</li>
+        <li><strong>Multiplos banners sao o anti-padrao mais criticado:</strong> 80% da comunidade critica carrosseis e banners competindo. CTR cai de 6.8% para 2.1% com 4+ banners simultaneos.</li>
+        <li><strong>Reward moments e storytelling sao os maiores diferenciais:</strong> Nubank (confete pos-KYC, 87% satisfacao), Revolut (storytelling disruptivo, personalizacao de cartao 2x engajamento) e Cash App (zero-onboarding, 55M MAU) se destacam por ir alem do funcional.</li>
+      </ol>
+    </div>
+    <div class="exec-box opportunities">
+      <h4>Top 3 Oportunidades</h4>
+      <ol>
+        <li><strong>Copy personalizado (RICE 300):</strong> Trocar "ate 115% do CDI" por "Seus R$ 400 renderiam R$ 4,60/mes". Potencial +20-35% CTR. Viavel com Andes X nativo.</li>
+        <li><strong>Desmistificacao contextual (RICE 200):</strong> Explicar o "porque" de cada pedido de dado no KYC. Potencial +10-20% conclusao. Referencia: Monzo.</li>
+        <li><strong>Progresso unificado (RICE 100):</strong> Substituir multiplos banners por card unico "3 de 5 passos". Potencial +15-20pp conclusao de pendings. Referencia: Nubank checklist.</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>Proximos Passos Recomendados</h3>
+  <ol>
+    <li><strong>Sprint 1-2 (H1):</strong> Implementar copy personalizado no banner de Cofrinho + eliminar carousel de pendings em favor de card unico de progresso. A/B test com 5k exposicoes.</li>
+    <li><strong>Sprint 3-4 (H1):</strong> Adicionar desmistificacao contextual ("Por que pedimos isso?") no fluxo KYC + microcopy empatico com estimativa de tempo.</li>
+    <li><strong>H2 (3-6m):</strong> Desenvolver reward moments pos-KYC, onboarding adaptativo por segmento e storytelling de marca.</li>
+  </ol>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 2: MAPA DE PADROES COMMODITY                            -->
+<!-- ============================================================ -->
+<section id="commodity">
+  <div class="section-number">Secao 2</div>
+  <h2>Mapa de Padroes Commodity</h2>
+  <p class="section-intro">Padroes visuais, interacionais e de copy que se tornaram comoditizados no mercado de onboarding fintech -- nenhum gera diferenciacao.</p>
+
+  <h3>Padroes Visuais</h3>
+  <table>
+    <thead><tr><th>Padrao</th><th>Prevalencia</th><th>Impacto</th></tr></thead>
+    <tbody>
+      <tr><td>Fundo branco + ilustracao flat</td><td>~90% das fintechs</td><td>Zero diferenciacao visual</td></tr>
+      <tr><td>Carousel 3-4 telas de boas-vindas</td><td>Universal</td><td>Skip rate 65-80%, 1% interacao apos slide 1</td></tr>
+      <tr><td>Barra de progresso linear</td><td>Muito comum</td><td>Funcional mas nao memoravel</td></tr>
+      <tr><td>Paleta safe (branco + cor + cinza)</td><td>Maioria</td><td>Nenhuma marca se destaca</td></tr>
+      <tr><td>Icones de seguranca genericos (cadeado, escudo)</td><td>Comum</td><td>Confianca generica, nao vinculada a marca</td></tr>
+      <tr><td>Checkmark verde de sucesso</td><td>Universal</td><td>Sem celebracao, sem emocao</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Padroes Interacionais</h3>
+  <table>
+    <thead><tr><th>Padrao</th><th>Problema</th></tr></thead>
+    <tbody>
+      <tr><td>Transicao slide-left padrao</td><td>Nao contribui para identidade de marca</td></tr>
+      <tr><td>Spinner generico de loading</td><td>Nenhum benchmark top usa -- todos substituiram por skeleton/shimmer/branded loading</td></tr>
+      <tr><td>Validacao inline verde/vermelho</td><td>Funcional mas sem tom de voz</td></tr>
+      <tr><td>Biometria como tela isolada</td><td>Sem contexto de "porque" ou beneficio</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Padroes de Copy</h3>
+  <table>
+    <thead><tr><th>Copy Commodity</th><th>Consenso Comunidade</th></tr></thead>
+    <tbody>
+      <tr><td>"Crie sua conta gratis"</td><td>Nao diferencia de nenhum concorrente</td></tr>
+      <tr><td>"Rapido e seguro"</td><td>Claim vazio sem prova</td></tr>
+      <tr><td>"Em poucos minutos"</td><td>Monzo mostra que "under 15 min" concreto e melhor</td></tr>
+      <tr><td>"Seus dados estao protegidos"</td><td>Generico -- Revolut usa humor/honestidade em compliance</td></tr>
+      <tr><td>"Vamos comecar!"</td><td>Imperativo sem beneficio</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quality-warning">
+    <strong>Validacao comunidade (Deep-web):</strong> ~80% das discussoes sao contra carrosseis de onboarding. ~85% favorecem copy personalizado sobre generico. ~75% criticam gamificacao explicita em fintech (prefira sutil).
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 3: BENCHMARK CRIATIVO (10 PLAYERS)                      -->
+<!-- ============================================================ -->
+<section id="benchmark">
+  <div class="section-number">Secao 3</div>
+  <h2>Benchmark Criativo -- 10 Players</h2>
+  <p class="section-intro">Analise de decisoes criativas diferenciadas por player, separando o que e verdadeiramente inovador do que e commodity.</p>
+
+  <!-- Nubank -->
+  <div class="card player-card highlight">
+    <div class="card-header">
+      <div>
+        <h4>Nubank</h4>
+        <div class="card-sub">Brasil -- Neobank -- 87% satisfacao</div>
+      </div>
+      <span class="tag tag-green">Referencia Top</span>
+    </div>
+    <p><strong>Decisoes criativas diferenciadas:</strong></p>
+    <ul>
+      <li><strong>Reward moments pos-KYC:</strong> confete + cores vibrantes celebram conclusao de etapa. Transforma burocracia em marco emocional.</li>
+      <li><strong>Cartao roxo como artefato emocional:</strong> nao e apenas um cartao, e um objeto de desejo que gera senso de conquista.</li>
+      <li><strong>Microcopy coloquial:</strong> "como si fuera magia" -- tom de voz que e impossivel confundir com outro banco.</li>
+      <li><strong>Nu Brand System:</strong> sistema de design com personalidade propria, nao generico.</li>
+    </ul>
+    <p><strong>O que e commodity:</strong> one-question-per-screen (funcional, mas ja padrao), barra de progresso linear.</p>
+  </div>
+
+  <!-- Revolut -->
+  <div class="card player-card highlight">
+    <div class="card-header">
+      <div>
+        <h4>Revolut</h4>
+        <div class="card-sub">UK/Global -- Super app financeiro</div>
+      </div>
+      <span class="tag tag-green">Referencia Top</span>
+    </div>
+    <p><strong>Decisoes criativas diferenciadas:</strong></p>
+    <ul>
+      <li><strong>Storytelling disruptivo:</strong> "Ready to change the way you money?" -- posiciona como ruptura, nao como mais uma conta.</li>
+      <li><strong>Personalizacao de cartao:</strong> drawing + emojis durante onboarding. 2x engajamento.</li>
+      <li><strong>Chips com emojis:</strong> interface que fala a lingua do usuario.</li>
+      <li><strong>Honestidade humorada em compliance:</strong> transforma fricao regulatoria em momento de marca.</li>
+      <li><strong>Progressive disclosure by action:</strong> consenso forte na comunidade (~70%).</li>
+    </ul>
+    <p><strong>O que e commodity:</strong> paleta azul/branco, estrutura de formulario padrao.</p>
+  </div>
+
+  <!-- Cash App -->
+  <div class="card player-card highlight">
+    <div class="card-header">
+      <div>
+        <h4>Cash App</h4>
+        <div class="card-sub">US -- ~55M MAU</div>
+      </div>
+      <span class="tag tag-green">Referencia Top</span>
+    </div>
+    <p><strong>Decisoes criativas diferenciadas:</strong></p>
+    <ul>
+      <li><strong>Zero-onboarding:</strong> 70%+ completam transacao em &lt;2 minutos. Menor fricao do mercado.</li>
+      <li><strong>Evergreen Design System (BUCK):</strong> ilustracoes 3D proprietarias, motion como identidade.</li>
+      <li><strong>Brand "between weird and wonderful":</strong> posicionamento visual unico -- gradientes Gen Z, anti-corporativo.</li>
+      <li><strong>Branded loading:</strong> logo pulsante em vez de spinner -- loading E identidade de marca.</li>
+    </ul>
+    <p><strong>O que e commodity:</strong> formulario de dados basico.</p>
+  </div>
+
+  <!-- N26 -->
+  <div class="card player-card">
+    <div class="card-header">
+      <div>
+        <h4>N26</h4>
+        <div class="card-sub">Alemanha/Global -- Banco digital</div>
+      </div>
+      <span class="tag tag-blue">Diferenciado</span>
+    </div>
+    <ul>
+      <li><strong>Lifestyle brand positioning:</strong> se posiciona como marca de estilo de vida, nao como banco.</li>
+      <li><strong>Cores anti-azul bancario:</strong> decisao deliberada de fugir da paleta fintech.</li>
+      <li><strong>Add-on model sem bifurcacao:</strong> onboarding unico, features extras depois.</li>
+    </ul>
+  </div>
+
+  <!-- C6 Bank -->
+  <div class="card player-card">
+    <div class="card-header">
+      <div>
+        <h4>C6 Bank</h4>
+        <div class="card-sub">Brasil -- Banco digital</div>
+      </div>
+      <span class="tag tag-blue">Diferenciado</span>
+    </div>
+    <ul>
+      <li><strong>Personalizacao cartao + icone do app:</strong> usuario customiza cor do cartao e icone.</li>
+      <li><strong>Loading com conteudo util:</strong> beneficios exibidos durante espera em vez de spinner vazio.</li>
+      <li><strong>Assistente por voz + hub de acessibilidade centralizado.</strong></li>
+    </ul>
+  </div>
+
+  <!-- PicPay -->
+  <div class="card player-card">
+    <div class="card-header">
+      <div>
+        <h4>PicPay</h4>
+        <div class="card-sub">Brasil -- 36M MAU</div>
+      </div>
+      <span class="tag tag-blue">Diferenciado</span>
+    </div>
+    <ul>
+      <li><strong>Gamificacao (BJ Fogg / Octalysis / Hook Model):</strong> cashback como habit loop.</li>
+      <li><strong>Login social:</strong> reducao de fricao no cadastro.</li>
+    </ul>
+    <p><strong>Atencao:</strong> ~75% da comunidade critica gamificacao explicita em fintech -- preferir abordagem sutil.</p>
+  </div>
+
+  <!-- Chime -->
+  <div class="card player-card">
+    <div class="card-header">
+      <div>
+        <h4>Chime</h4>
+        <div class="card-sub">US -- Banco digital</div>
+      </div>
+      <span class="tag tag-blue">Diferenciado</span>
+    </div>
+    <ul>
+      <li><strong>Rebrand JKR:</strong> ilustracoes inclusivas, Mountain Meadow verde para trust.</li>
+      <li><strong>Early direct deposit como "aha moment":</strong> valor entregue antes de completar onboarding.</li>
+      <li><strong>Nudges gentis:</strong> abordagem nao-intrusiva.</li>
+    </ul>
+  </div>
+
+  <!-- Monzo -->
+  <div class="card player-card">
+    <div class="card-header">
+      <div>
+        <h4>Monzo</h4>
+        <div class="card-sub">UK -- Banco digital</div>
+      </div>
+      <span class="tag tag-blue">Diferenciado</span>
+    </div>
+    <ul>
+      <li><strong>Magic link:</strong> elimina fricao de senha.</li>
+      <li><strong>Promessa de tempo concreta:</strong> "under 15 minutes" -- nao "em poucos minutos".</li>
+      <li><strong>Microcopy empatico + explicacao do "porque" em KYC.</strong></li>
+      <li><strong>Slider overdraft real-time + transparencia radical.</strong></li>
+      <li><strong>Carousel educativo durante loading de KYC.</strong></li>
+    </ul>
+  </div>
+
+  <!-- Wise -->
+  <div class="card player-card">
+    <div class="card-header">
+      <div>
+        <h4>Wise</h4>
+        <div class="card-sub">UK/Global -- Transferencias internacionais</div>
+      </div>
+      <span class="tag tag-gray">Funcional</span>
+    </div>
+    <ul>
+      <li><strong>Transparencia como brand DNA:</strong> taxas visiveis antes de cadastro -- valor antes de pedido.</li>
+    </ul>
+  </div>
+
+  <!-- Inter -->
+  <div class="card player-card">
+    <div class="card-header">
+      <div>
+        <h4>Inter</h4>
+        <div class="card-sub">Brasil -- Super app</div>
+      </div>
+      <span class="tag tag-gray">Funcional</span>
+    </div>
+    <ul>
+      <li><strong>Checklist pre-onboarding:</strong> "Separe antes de comecar" -- reduz abandono por falta de documento.</li>
+      <li><strong>Progresso persistente + edicao inline.</strong></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 4: ESTADOS DE UI NOS BENCHMARKS                         -->
+<!-- ============================================================ -->
+<section id="estados-ui">
+  <div class="section-number">Secao 4</div>
+  <h2>Estados de UI nos Benchmarks</h2>
+  <p class="section-intro">Como os melhores players tratam loading, empty states e erros -- nenhum top player usa spinner generico.</p>
+
+  <table>
+    <thead>
+      <tr><th>Player</th><th>Loading</th><th>Empty State</th><th>Error</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nubank</strong></td>
+        <td>Skeleton + shimmer; KYC com prazo explicito ("Em ate 1 dia util")</td>
+        <td>Ilustracao customizada + CTA contextual</td>
+        <td>Inline especifico por campo</td>
+      </tr>
+      <tr>
+        <td><strong>Revolut</strong></td>
+        <td>Progress 5 steps + micro-animacao entre etapas</td>
+        <td>Quick actions em dashboard vazio</td>
+        <td>Feedback screen com 2 CTAs (retry + suporte)</td>
+      </tr>
+      <tr>
+        <td><strong>Cash App</strong></td>
+        <td>Branded loading (logo pulsante)</td>
+        <td>Zero-state orientado a acao</td>
+        <td>Flash de cor + mensagem curta</td>
+      </tr>
+      <tr>
+        <td><strong>Monzo</strong></td>
+        <td>Skeleton fiel + carousel educativo na espera de KYC</td>
+        <td>Timeline com "Voce abriu sua conta!" como marco</td>
+        <td>Status real-time + push de resolucao</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Padroes Transversais</h3>
+  <ul>
+    <li><strong>Nenhum top player usa spinner generico</strong> -- todos substituiram por skeleton, shimmer ou branded loading.</li>
+    <li><strong>Empty states sempre com CTA contextual</strong> -- nenhum mostra tela vazia sem direcionar acao.</li>
+    <li><strong>Erros com especificidade</strong> -- mensagem especifica por campo/situacao, nao "Algo deu errado".</li>
+    <li><strong>Loading como oportunidade de marca</strong> -- Monzo usa carousel educativo, Cash App usa logo animada.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 5: TENDENCIAS 2025-2026                                 -->
+<!-- ============================================================ -->
+<section id="tendencias">
+  <div class="section-number">Secao 5</div>
+  <h2>Tendencias 2025-2026</h2>
+  <p class="section-intro">Tendencias emergentes com dados de impacto e aplicacao ao contexto Mercado Pago.</p>
+
+  <table>
+    <thead>
+      <tr><th>Tendencia</th><th>Dado de Impacto</th><th>Aplicacao MP</th><th>Horizonte</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Generative UI</strong></td>
+        <td>Gartner: 30% adocao ate 2026</td>
+        <td>Onboarding adaptativo por perfil de usuario</td>
+        <td><span class="tag tag-gray">H3 (6-12m)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Motion como identidade</strong></td>
+        <td>+30-40% percepcao de performance</td>
+        <td>Motion system proprietario MP -- amarelo + cyan nas transicoes</td>
+        <td><span class="tag tag-gray">H3 (6-12m)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Gamificacao sofisticada</strong></td>
+        <td>+47% engajamento (d=0.36 meta-analise 87 estudos, Tier 1)</td>
+        <td>Progresso visivel, badges, reward moments sutis</td>
+        <td><span class="tag tag-blue">H2 (3-6m)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Onboarding progressivo</strong></td>
+        <td>+50% retencao, +90% engajamento semanal, +28% ativacao (Appcues 1.2B sessoes, Tier 1)</td>
+        <td>Desbloquear features conforme uso -- nao front-load tudo</td>
+        <td><span class="tag tag-blue">H2 (3-6m)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Auth frictionless</strong></td>
+        <td>+30-50% conversao</td>
+        <td>Magic link, biometria contextual</td>
+        <td><span class="tag tag-blue">H2 (3-6m)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Data storytelling</strong></td>
+        <td>Copy personalizado +25-50% CTR (Tier 2)</td>
+        <td>"Seus R$ 400 renderiam R$ 4,60/mes" -- concreto e pessoal</td>
+        <td><span class="tag tag-green">H1 (0-3m)</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quality-warning">
+    <strong>Red Flags do Deep-web:</strong> Dados de Appcues e Dynamic Yield tem vies de vendor. Dados majoritariamente US/UK -- validar para contexto LatAm. Relatos Reddit sao Tier 3 (anedoticos). Usar como direcao, nao como meta cega.
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 6: GAP ANALYSIS MERCADO PAGO                            -->
+<!-- ============================================================ -->
+<section id="gap-analysis">
+  <div class="section-number">Secao 6</div>
+  <h2>Gap Analysis -- Mercado Pago</h2>
+  <p class="section-intro">Onde o MP esta atras dos benchmarks e onde pode liderar.</p>
+
+  <h3>Gaps Identificados</h3>
+  <table>
+    <thead><tr><th>Gap</th><th>Benchmark de Referencia</th><th>Severidade</th></tr></thead>
+    <tbody>
+      <tr><td>Storytelling generico no onboarding</td><td>Revolut, Cash App</td><td><span class="tag tag-red">Alta</span></td></tr>
+      <tr><td>Sem motion proprietario</td><td>Cash App (BUCK), Nubank (confete)</td><td><span class="tag tag-amber">Media</span></td></tr>
+      <tr><td>Sem personalizacao visual</td><td>Revolut (cartao), C6 (cor + icone)</td><td><span class="tag tag-amber">Media</span></td></tr>
+      <tr><td>Sem gamificacao estruturada</td><td>PicPay, Nubank (reward moments)</td><td><span class="tag tag-amber">Media</span></td></tr>
+      <tr><td>Sem honestidade/humor em compliance</td><td>Revolut</td><td><span class="tag tag-yellow">Baixa</span></td></tr>
+      <tr><td>Sem reward moments pos-KYC</td><td>Nubank</td><td><span class="tag tag-red">Alta</span></td></tr>
+      <tr><td>Sem hub de acessibilidade</td><td>C6 Bank</td><td><span class="tag tag-yellow">Baixa</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Oportunidades de Lideranca</h3>
+  <ul>
+    <li><strong>"Everyday Winning" como narrativa unica:</strong> nenhum concorrente tem conceito equivalente. Potencial de transformar cada micro-acao em uma "vitoria".</li>
+    <li><strong>Onboarding para baixa familiaridade financeira:</strong> ninguem faz isso bem. Publico que precisa entender antes de agir. Oportunidade de ser referencia global.</li>
+    <li><strong>Desmistificacao + tom empoderador:</strong> explicar "por que pedimos seu CPF" com tom de igual para igual, nao didatico.</li>
+    <li><strong>Ecossistema MeLi:</strong> vantagem unica -- pode mostrar valor do ecossistema (frete gratis, cashback, pontos) durante onboarding.</li>
+    <li><strong>Amarelo memoravel:</strong> cor mais distinta do mercado fintech. Nenhum concorrente tem amarelo como primaria.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 7: PROPOSTAS VISUAIS                                    -->
+<!-- ============================================================ -->
+<section id="propostas">
+  <div class="section-number">Secao 7</div>
+  <h2>Propostas Visuais</h2>
+  <p class="section-intro">5 propostas com prototipos HTML, cada uma vinculada a uma friccao, hipotese e dados de benchmark. Notas editoriais do critico incluidas.</p>
+
+  <!-- Proposta 1 -->
+  <div class="proposal">
+    <span class="proposal-number">Proposta 1</span>
+    <h4>"Teu Mundo Financeiro" -- Storytelling</h4>
+    <div class="proposal-meta">
+      <span class="tag tag-blue">Storytelling</span>
+      <span class="rice-score">RICE referencia: Storytelling 67</span>
+    </div>
+
+    <p><strong>Friccao:</strong> "Crie sua conta" nao diferencia MP de nenhum concorrente. Onboarding generico = commodity.</p>
+    <p><strong>Dado:</strong> 80% da comunidade contra carrosseis genericos. Revolut storytelling como referencia.</p>
+
+    <div class="hypothesis-statement">
+      <strong>SE</strong> substituirmos onboarding generico por narrativa de valor (receber / guardar / pagar) <strong>ENTAO</strong> engajamento inicial >85% <strong>PORQUE</strong> reciprocidade -- usuario ve valor antes de preencher dados.
+    </div>
+
+    <p><strong>Descricao:</strong> 3 telas narrativas com moedas animadas, gradiente cyan-branco, CTA "Continuar". Cada tela foca em um pilar: receber, guardar, pagar.</p>
+    <p><strong>Variante A/B:</strong> Beneficio qualitativo vs. valor simulado em reais.</p>
+    <p><strong>Componentes Andes X:</strong> Button Loud + Progress indicator (dots). <strong>Custom:</strong> ilustracoes animadas CSS.</p>
+
+    <details>
+      <summary>Ver prototipo HTML</summary>
+      <div class="proposal-iframe-wrapper">
+        <iframe src="proposals-onboarding-creative/01-storytelling-boas-vindas.html" title="Proposta 1 - Storytelling"></iframe>
+      </div>
+    </details>
+  </div>
+
+  <!-- Proposta 2 -->
+  <div class="proposal">
+    <span class="proposal-number">Proposta 2</span>
+    <h4>"Reward Moments" -- Celebracao</h4>
+    <div class="proposal-meta">
+      <span class="tag tag-green">Gamificacao Sutil</span>
+      <span class="rice-score">RICE 100</span>
+    </div>
+
+    <p><strong>Friccao:</strong> Etapas KYC sao burocraticas sem reconhecimento emocional. Sem marco de conquista.</p>
+    <p><strong>Dado:</strong> Nubank reward moments + efeito Zeigarnik. Gamificacao sutil +47% engajamento (meta-analise 87 estudos, Tier 1).</p>
+
+    <div class="hypothesis-statement">
+      <strong>SE</strong> celebracao pos-marco (check animado + card "feature desbloqueada" + badge progresso) <strong>ENTAO</strong> ativacao >=3 acoes +15-25% <strong>PORQUE</strong> reforco positivo transforma burocracia em conquista.
+    </div>
+
+    <p><strong>Componentes Andes X:</strong> Feedback screen (positive) + Button + Badge. <strong>Custom:</strong> confetti CSS (fora de Andes X).</p>
+
+    <div class="editorial-note">
+      <strong>Nota Editorial (Critico):</strong> Inverter variantes -- default SEM confetti (check + badge), teste COM confetti. Justificativa: Deep-web identificou que 34% consideram celebracao excessiva "trust-breaking" em fintech. O confetti deve ser a variante a provar, nao o padrao.
+    </div>
+
+    <details>
+      <summary>Ver prototipo HTML</summary>
+      <div class="proposal-iframe-wrapper">
+        <iframe src="proposals-onboarding-creative/02-reward-moments.html" title="Proposta 2 - Reward Moments"></iframe>
+      </div>
+    </details>
+  </div>
+
+  <!-- Proposta 3 -->
+  <div class="proposal">
+    <span class="proposal-number">Proposta 3</span>
+    <h4>"Deixa com a Sua Cara" -- Personalizacao</h4>
+    <div class="proposal-meta">
+      <span class="tag tag-blue">Personalizacao</span>
+      <span class="tag tag-amber">Sem RICE formal</span>
+    </div>
+
+    <p><strong>Friccao:</strong> Conta nova nao tem identidade pessoal. Sem vinculo emocional.</p>
+    <p><strong>Dado:</strong> Revolut 2x engajamento com cartao personalizado. C6 personalizacao de cartao + icone.</p>
+
+    <div class="hypothesis-statement">
+      <strong>SE</strong> customizacao de cartao (4 temas, 8 emojis, apelido, preview real-time) <strong>ENTAO</strong> retencao D7 +10-15% <strong>PORQUE</strong> efeito IKEA + dotacao -- usuario investe esforco e valoriza mais.
+    </div>
+
+    <p><strong>Componentes Andes X:</strong> Button + Textfield + Card. <strong>Custom:</strong> gradientes de cartao, seletor de tema.</p>
+    <p><strong>Variante A/B:</strong> Customizacao completa vs. so cor.</p>
+
+    <div class="editorial-note">
+      <strong>Nota Editorial (Critico):</strong> Cores custom (#FF6B35 sunset, #004D40 forest) sinalizadas como fora de Andes X. Verificar restricao regulatoria de bandeira para modificacao visual do cartao antes de implementar.
+    </div>
+
+    <details>
+      <summary>Ver prototipo HTML</summary>
+      <div class="proposal-iframe-wrapper">
+        <iframe src="proposals-onboarding-creative/03-personalizacao-visual.html" title="Proposta 3 - Personalizacao"></iframe>
+      </div>
+    </details>
+  </div>
+
+  <!-- Proposta 4 -->
+  <div class="proposal">
+    <span class="proposal-number">Proposta 4</span>
+    <h4>"Entende Antes, Age Depois" -- Desmistificacao</h4>
+    <div class="proposal-meta">
+      <span class="tag tag-green">Quick Win</span>
+      <span class="rice-score">RICE 200</span>
+    </div>
+
+    <p><strong>Friccao:</strong> Jargoes financeiros (CDI, chave Pix) sao barreira para publico com baixa familiaridade.</p>
+    <p><strong>Dado:</strong> Monzo explicacao do "porque" em KYC. 85% da comunidade favoravel a copy personalizado. 100% viavel com Andes X.</p>
+
+    <div class="hypothesis-statement">
+      <strong>SE</strong> explicacao contextual inline ("Por que pedimos isso?" expansivel) <strong>ENTAO</strong> cadastro Pix +12-18pp <strong>PORQUE</strong> confianca antes de pedido -- usuario entende e confia.
+    </div>
+
+    <p><strong>Variante A:</strong> Explainer inline expansivel com analogia ("Chave Pix e como seu endereco para receber dinheiro").</p>
+    <p><strong>Variante B:</strong> Bottom sheet + slider de rendimento real-time.</p>
+    <p><strong>Componentes Andes X:</strong> Button + Radio button + Expandable section + Bottom sheet + Tooltip + Card + Message. <strong>Custom:</strong> slider de calculo.</p>
+
+    <details>
+      <summary>Ver prototipo HTML</summary>
+      <div class="proposal-iframe-wrapper">
+        <iframe src="proposals-onboarding-creative/04-desmistificacao-contextual.html" title="Proposta 4 - Desmistificacao"></iframe>
+      </div>
+    </details>
+  </div>
+
+  <!-- Proposta 5 -->
+  <div class="proposal">
+    <span class="proposal-number">Proposta 5</span>
+    <h4>"Seus Proximos Passos" -- Progresso Unificado</h4>
+    <div class="proposal-meta">
+      <span class="tag tag-green">Quick Win</span>
+      <span class="rice-score">RICE 100</span>
+    </div>
+
+    <p><strong>Friccao:</strong> Multiplos banners de pendings competem sem hierarquia -- anti-padrao #1 mais criticado.</p>
+    <p><strong>Dado:</strong> Baymard -20-30% CTR com >2 CTAs. Zeigarnik. Progressive onboarding +28% ativacao (Appcues 1.2B sessoes, Tier 1).</p>
+
+    <div class="hypothesis-statement">
+      <strong>SE</strong> card unico de progresso ("3 de 5 passos completos") <strong>ENTAO</strong> conclusao pendings +15-20pp <strong>PORQUE</strong> Zeigarnik (progresso incompleto motiva) + paradoxo da escolha eliminado.
+    </div>
+
+    <p><strong>Variante A:</strong> Ring progress compacto + checklist.</p>
+    <p><strong>Variante B:</strong> Timeline vertical com CTAs inline.</p>
+    <p><strong>Componentes Andes X:</strong> Card + Progress indicator segments + Badge + Button Small. <strong>Custom:</strong> ring SVG, timeline vertical.</p>
+
+    <div class="editorial-note">
+      <strong>Nota Editorial (Critico):</strong> Adicionar variante C com progressive disclosure (revelar 1 step por vez). Trade-off relevante: Zeigarnik (ver tudo incentiva) vs. curiosidade (revelar incentiva). Pesquisador e deep-web favorecem progressive.<br><br>
+      <strong>Nota tecnica:</strong> border-radius 8px no step-cta deveria ser 12px (Andes X). Quick-actions 16px deveria ser 12px ou 20px. Corrigir na implementacao.
+    </div>
+
+    <details>
+      <summary>Ver prototipo HTML</summary>
+      <div class="proposal-iframe-wrapper">
+        <iframe src="proposals-onboarding-creative/05-progresso-unificado.html" title="Proposta 5 - Progresso Unificado"></iframe>
+      </div>
+    </details>
+  </div>
+
+  <h3>Ideias Bonus</h3>
+  <ul>
+    <li><strong>Haptic feedback estrategico:</strong> vibracao sutil em marcos de conquista (mobile).</li>
+    <li><strong>Data storytelling "Seu dinheiro trabalhando":</strong> visualizacao animada do rendimento.</li>
+    <li><strong>Motion system proprietario MP:</strong> transicoes com amarelo + cyan como assinatura de marca.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 8: ESTRATEGIA E ROADMAP                                 -->
+<!-- ============================================================ -->
+<section id="estrategia">
+  <div class="section-number">Secao 8</div>
+  <h2>Estrategia e Roadmap</h2>
+  <p class="section-intro">Priorizacao por RICE, matriz de esforco x impacto, roadmap em 3 horizontes e hipoteses A/B com edge cases.</p>
+
+  <h3>Matriz Esforco x Impacto</h3>
+  <div class="matrix-grid">
+    <div class="matrix-quadrant q1">
+      <h4>Alto Impacto / Baixo Esforco (H1)</h4>
+      <ul>
+        <li>Copy personalizado <span class="rice-score">300</span></li>
+        <li>Desmistificacao <span class="rice-score">200</span></li>
+        <li>Eliminar carousel <span class="rice-score">100</span></li>
+        <li>Microcopy empatico <span class="rice-score">100</span></li>
+      </ul>
+    </div>
+    <div class="matrix-quadrant q2">
+      <h4>Alto Impacto / Alto Esforco (H2)</h4>
+      <ul>
+        <li>Onboarding adaptativo <span class="tag tag-blue">75</span></li>
+        <li>Motion system <span class="tag tag-gray">H3</span></li>
+        <li>Storytelling <span class="tag tag-blue">67</span></li>
+      </ul>
+    </div>
+    <div class="matrix-quadrant q3" style="grid-column: span 2;">
+      <h4>Baixo Impacto / Alto Esforco (Monitorar)</h4>
+      <ul>
+        <li>Generative UI <span class="tag tag-gray">H3</span></li>
+        <li>Hub de acessibilidade <span class="tag tag-gray">H3</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Ranking RICE</h3>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Oportunidade</th><th>RICE</th><th>Reach</th><th>Impact</th><th>Confidence</th><th>Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Copy personalizado</strong></td><td><span class="rice-score">300</span></td><td>100% novos</td><td>3x (+15-40% CTR)</td><td><span class="tag tag-green">Alta</span></td><td>1 sprint</td></tr>
+      <tr><td>2</td><td><strong>Desmistificacao</strong></td><td><span class="rice-score">200</span></td><td>100% novos</td><td>2x (+10-25% conclusao)</td><td><span class="tag tag-amber">Media-alta</span></td><td>2 sprints</td></tr>
+      <tr><td>3</td><td><strong>Eliminar carousel</strong></td><td><span class="rice-score">100</span></td><td>100% novos</td><td>2x (paradoxo escolha)</td><td><span class="tag tag-amber">Media (50%)</span></td><td>1 sprint</td></tr>
+      <tr><td>4</td><td><strong>Reward moments</strong></td><td><span class="rice-score">100</span></td><td>100% novos KYC</td><td>2x (+47% engajamento)</td><td><span class="tag tag-amber">Media</span></td><td>2-3 sprints</td></tr>
+      <tr><td>5</td><td><strong>Microcopy empatico</strong></td><td><span class="rice-score">100</span></td><td>100% novos KYC</td><td>1x (incremental)</td><td><span class="tag tag-green">Alta</span></td><td>1 sprint</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quality-warning">
+    <strong>Lacuna declarada pelo Estrategista:</strong> Sem baseline de CTR atual, funil Pix ou clicks por slide. Os scores RICE sao estimativas -- recomenda-se levantar baselines antes de definir metas absolutas.
+  </div>
+
+  <h3>Roadmap 3 Horizontes</h3>
+  <table>
+    <thead><tr><th>Horizonte</th><th>Periodo</th><th>Iniciativas</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="tag tag-green">H1</span></td>
+        <td>0-3 meses</td>
+        <td>Copy personalizado, Desmistificacao contextual, Eliminar carousel, Microcopy empatico</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-blue">H2</span></td>
+        <td>3-6 meses</td>
+        <td>Reward moments, Onboarding adaptativo, Storytelling de marca</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-gray">H3</span></td>
+        <td>6-12 meses</td>
+        <td>Motion system proprietario, Generative UI, Hub de acessibilidade</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Hipoteses A/B com Edge Cases</h3>
+
+  <!-- H1 -->
+  <div class="hypothesis-card">
+    <h4>Hipotese 1 -- Copy Personalizado</h4>
+    <div class="hypothesis-statement">
+      <strong>SE</strong> "Seus R$ [saldo] renderiam R$ [valor]/mes" <strong>ENTAO</strong> CTR +20-35% <strong>PORQUE</strong> enquadramento + dotacao -- usuario ve o ganho como pessoal e tangivel, nao abstrato.
+    </div>
+    <p><strong>Segmento:</strong> Saldo >R$100. <strong>Duracao:</strong> 2 semanas ou 5k exposicoes. <strong>Guardrail:</strong> Valor medio aplicado (copy concreto pode ancorar em valor baixo).</p>
+    <div class="edge-cases">
+      <strong>Edge cases:</strong>
+      <ul>
+        <li>Saldo &lt;R$50: fallback para percentual ("%")</li>
+        <li>API de saldo offline: copy estatica generica</li>
+        <li>Loading >2s: fallback imediato para copy estatica</li>
+        <li>Saldo >R$50k: adicionar helper "simulacao de 30 dias"</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- H2 -->
+  <div class="hypothesis-card">
+    <h4>Hipotese 2 -- Desmistificacao</h4>
+    <div class="hypothesis-statement">
+      <strong>SE</strong> "Por que pedimos isso?" expansivel no fluxo KYC <strong>ENTAO</strong> conclusao KYC +10-20% <strong>PORQUE</strong> confianca antes de pedido.
+    </div>
+    <div class="edge-cases">
+      <strong>Edge cases:</strong>
+      <ul>
+        <li>Usuario ja tem chave Pix: pular tela</li>
+        <li>API offline: nao iniciar fluxo (evitar erro no meio)</li>
+        <li>Loading: skeleton com timeout de 5 segundos</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- H3 -->
+  <div class="hypothesis-card">
+    <h4>Hipotese 3 -- Eliminar Carousel</h4>
+    <div class="hypothesis-statement">
+      <strong>SE</strong> banner unico priorizado (em vez de multiplos) <strong>ENTAO</strong> interacao +15% <strong>PORQUE</strong> paradoxo da escolha eliminado.
+    </div>
+    <p><strong>Ordem de prioridade fallback:</strong> Pix > Identidade > Cofrinho > Open Finance.</p>
+    <div class="edge-cases">
+      <strong>Edge cases:</strong>
+      <ul>
+        <li>Saldo zero: priorizar Pix (habilita recebimento)</li>
+        <li>API offline: conteudo educativo estatico</li>
+        <li>Todos pendings concluidos: Feedback screen positive</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- H4 -->
+  <div class="hypothesis-card">
+    <h4>Hipotese 4 -- Recompensa / Progresso</h4>
+    <div class="hypothesis-statement">
+      <strong>SE</strong> "3 de 5 passos completos" com barra de progresso <strong>ENTAO</strong> ativacao +15-25% <strong>PORQUE</strong> Zeigarnik + modelo Fogg.
+    </div>
+    <div class="edge-cases">
+      <strong>Edge cases:</strong>
+      <ul>
+        <li>0 de 5: endowed progress (mostrar "1 de 5" com conta criada como primeiro passo)</li>
+        <li>API offline: cache local do progresso</li>
+        <li>Cofrinho com saldo zero: marcar como opcional</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- H5 -->
+  <div class="hypothesis-card">
+    <h4>Hipotese 5 -- Microcopy de Tempo</h4>
+    <div class="hypothesis-statement">
+      <strong>SE</strong> "Leva 1 min" no CTA <strong>ENTAO</strong> inicio +10-15% <strong>PORQUE</strong> reduz incerteza temporal.
+    </div>
+    <div class="edge-cases">
+      <strong>Edge cases:</strong>
+      <ul>
+        <li>Tempos sao estaticos (nao dinamicos)</li>
+        <li>Fluxo offline: "(indisponivel agora)"</li>
+        <li>Fluxo parcial: "Falta pouco -- continuar"</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Dashboard de Metricas</h3>
+  <table>
+    <thead><tr><th>Metrica</th><th>Tipo</th><th>Meta</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Taxa de ativacao 7d (>=3 acoes)</strong></td><td>North Star</td><td>45%</td></tr>
+      <tr><td>Engajamento inicial (inicio -> etapa 2)</td><td>Funil</td><td>>80%</td></tr>
+      <tr><td>Conclusao onboarding</td><td>Funil</td><td>60%</td></tr>
+      <tr><td>Tempo total onboarding</td><td>Eficiencia</td><td>&lt;8 min</td></tr>
+      <tr><td>NPS</td><td>Guardrail</td><td>>50</td></tr>
+      <tr><td>Tickets suporte onboarding</td><td>Guardrail</td><td>&lt;5%</td></tr>
+      <tr><td>Desinstalacao 24h</td><td>Guardrail</td><td>Estavel vs. baseline</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Riscos e Dependencias</h3>
+  <table>
+    <thead><tr><th>Risco</th><th>Horizonte</th><th>Mitigacao</th></tr></thead>
+    <tbody>
+      <tr><td>API de saldo indisponivel para copy personalizado</td><td>H1</td><td>Fallback para copy estatica; timeout de 2s</td></tr>
+      <tr><td>LGPD -- saldo em banner visivel</td><td>H1</td><td>Validar com juridico antes de implementar</td></tr>
+      <tr><td>BACEN -- compliance KYC imutavel</td><td>H1</td><td>Desmistificacao e aditiva, nao modifica campos obrigatorios</td></tr>
+      <tr><td>Dependencia de motion designer para H3</td><td>H3</td><td>Iniciar com tokens CSS simples, evoluir</td></tr>
+      <tr><td>Restricao regulatoria de bandeira para cartao custom</td><td>H2</td><td>Verificar com parceiros antes de investir em personalizacao</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 9: MAPA DE RASTREABILIDADE                              -->
+<!-- ============================================================ -->
+<section id="rastreabilidade">
+  <div class="section-number">Secao 9</div>
+  <h2>Mapa de Rastreabilidade</h2>
+  <p class="section-intro">Cadeia completa friccao -> benchmark -> hipotese -> proposta -> RICE para cada oportunidade identificada.</p>
+
+  <h3>Friccoes com Cadeia Completa</h3>
+
+  <div class="trace-chain">
+    <strong>Friccao #1: Copy generico ("ate 115% do CDI") nao comunica valor pessoal</strong>
+    <div class="trace-step"><strong>Benchmark:</strong> Monzo (promessa de tempo concreta), Wise (transparencia antes de cadastro), Revolut (storytelling pessoal)</div>
+    <div class="trace-step"><strong>Dado comunidade:</strong> ~85% favoravel a copy personalizado sobre generico (Consenso ALTO)</div>
+    <div class="trace-step"><strong>Hipotese:</strong> SE "Seus R$ [saldo] renderiam R$ [valor]/mes" ENTAO CTR +20-35% PORQUE enquadramento + dotacao</div>
+    <div class="trace-step"><strong>Proposta Visual:</strong> #4 "Entende Antes, Age Depois" (Variante B com slider de rendimento real-time)</div>
+    <div class="trace-step"><strong>RICE Score:</strong> 300 (Prioridade #1)</div>
+  </div>
+
+  <div class="trace-chain">
+    <strong>Friccao #2: Jargoes financeiros sao barreira para publico baixa familiaridade</strong>
+    <div class="trace-step"><strong>Benchmark:</strong> Monzo (explicacao do "porque" em KYC), Revolut (honestidade humorada em compliance)</div>
+    <div class="trace-step"><strong>Dado comunidade:</strong> ~70% favoravel a progressive disclosure (Consenso ALTO)</div>
+    <div class="trace-step"><strong>Hipotese:</strong> SE "Por que pedimos isso?" expansivel ENTAO conclusao KYC +10-20% PORQUE confianca antes de pedido</div>
+    <div class="trace-step"><strong>Proposta Visual:</strong> #4 "Entende Antes, Age Depois" (Variante A com explainer inline)</div>
+    <div class="trace-step"><strong>RICE Score:</strong> 200 (Prioridade #2)</div>
+  </div>
+
+  <div class="trace-chain">
+    <strong>Friccao #3: Multiplos banners de pendings competem sem hierarquia</strong>
+    <div class="trace-step"><strong>Benchmark:</strong> Nubank (checklist de ativacao), Chime (nudges gentis)</div>
+    <div class="trace-step"><strong>Dado comunidade:</strong> Multiplos banners = anti-padrao MAIS criticado. Baymard: -20-30% CTR com >2 CTAs</div>
+    <div class="trace-step"><strong>Hipotese:</strong> SE banner unico priorizado ENTAO interacao +15% PORQUE paradoxo da escolha</div>
+    <div class="trace-step"><strong>Proposta Visual:</strong> #5 "Seus Proximos Passos" (Variante A ring + checklist ou B timeline)</div>
+    <div class="trace-step"><strong>RICE Score:</strong> 100 (Prioridade #3)</div>
+  </div>
+
+  <div class="trace-chain">
+    <strong>Friccao #4: KYC burocratico sem reconhecimento emocional</strong>
+    <div class="trace-step"><strong>Benchmark:</strong> Nubank (confete + cores vibrantes, 87% satisfacao), PicPay (cashback como habit loop)</div>
+    <div class="trace-step"><strong>Dado comunidade:</strong> Gamificacao sutil d=0.36 positivo (Tier 1). MAS 34% consideram celebracao excessiva "trust-breaking"</div>
+    <div class="trace-step"><strong>Hipotese:</strong> SE celebracao pos-marco ENTAO ativacao >=3 acoes +15-25% PORQUE reforco positivo</div>
+    <div class="trace-step"><strong>Proposta Visual:</strong> #2 "Reward Moments" (default SEM confetti, teste COM -- ajustado pelo critico)</div>
+    <div class="trace-step"><strong>RICE Score:</strong> 100 (Prioridade #4)</div>
+  </div>
+
+  <div class="trace-chain">
+    <strong>Friccao #5: "Crie sua conta" nao diferencia MP de concorrentes</strong>
+    <div class="trace-step"><strong>Benchmark:</strong> Revolut (storytelling disruptivo), Cash App (zero-onboarding), N26 (lifestyle brand)</div>
+    <div class="trace-step"><strong>Dado comunidade:</strong> ~80% contra carrosseis de onboarding generico (Consenso ALTO)</div>
+    <div class="trace-step"><strong>Hipotese:</strong> SE narrativa de valor (receber/guardar/pagar) ENTAO engajamento inicial >85% PORQUE reciprocidade</div>
+    <div class="trace-step"><strong>Proposta Visual:</strong> #1 "Teu Mundo Financeiro" (3 telas narrativas)</div>
+    <div class="trace-step"><strong>RICE Score:</strong> Storytelling 67 (Prioridade #7 -- H2)</div>
+  </div>
+
+  <h3>Oportunidades Proativas (sem friccao mapeada)</h3>
+
+  <div class="trace-chain" style="border-left-color: var(--green);">
+    <strong>Oportunidade: Personalizacao visual do cartao</strong>
+    <div class="trace-step"><strong>Benchmark:</strong> Revolut (2x engajamento), C6 (cor + icone)</div>
+    <div class="trace-step"><strong>Hipotese:</strong> SE customizacao de cartao ENTAO retencao D7 +10-15% PORQUE efeito IKEA + dotacao</div>
+    <div class="trace-step"><strong>Proposta Visual:</strong> #3 "Deixa com a Sua Cara"</div>
+    <div class="trace-step"><strong>RICE:</strong> Sem score formal -- considerar para proxima iteracao de priorizacao</div>
+  </div>
+
+  <div class="trace-chain" style="border-left-color: var(--green);">
+    <strong>Oportunidade: Microcopy de tempo nos CTAs</strong>
+    <div class="trace-step"><strong>Benchmark:</strong> Monzo ("under 15 min"), Revolut (progressive disclosure)</div>
+    <div class="trace-step"><strong>Hipotese:</strong> SE "Leva 1 min" no CTA ENTAO inicio +10-15% PORQUE reduz incerteza temporal</div>
+    <div class="trace-step"><strong>Proposta Visual:</strong> Sem proposta visual dedicada -- aplicavel como padrao transversal</div>
+    <div class="trace-step"><strong>RICE Score:</strong> 100 (Prioridade #5)</div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 10: AVALIACAO DO CRITICO (SCORECARD)                    -->
+<!-- ============================================================ -->
+<section id="scorecard">
+  <div class="section-number">Secao 10</div>
+  <h2>Avaliacao do Critico</h2>
+  <p class="section-intro">Scorecard de qualidade R1 vs. R2, contradicoes resolvidas, perspectivas alternativas e riscos.</p>
+
+  <h3>Scorecard R1 vs. R2</h3>
+  <table>
+    <thead>
+      <tr><th>Agente</th><th>Score R1</th><th>Score R2</th><th>Delta</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Pesquisador</strong></td>
+        <td class="score-cell">3.25</td>
+        <td class="score-cell score-high">4.0</td>
+        <td>+0.75</td>
+        <td><span class="score-indicator">&#9989;</span> Acima do threshold</td>
+      </tr>
+      <tr>
+        <td><strong>Deep-web</strong></td>
+        <td class="score-cell">3.25</td>
+        <td class="score-cell score-mid">3.6</td>
+        <td>+0.35</td>
+        <td><span class="score-indicator">&#128993;</span> Proximo do threshold</td>
+      </tr>
+      <tr>
+        <td><strong>Estrategista</strong></td>
+        <td class="score-cell">3.50</td>
+        <td class="score-cell score-high">4.1</td>
+        <td>+0.60</td>
+        <td><span class="score-indicator">&#9989;</span> Acima do threshold</td>
+      </tr>
+      <tr>
+        <td><strong>Designer Criativo</strong></td>
+        <td class="score-cell">3.36</td>
+        <td class="score-cell score-mid">3.5</td>
+        <td>+0.14</td>
+        <td><span class="score-indicator">&#128993;</span> Proximo do threshold</td>
+      </tr>
+      <tr style="background: var(--gray-100); font-weight: 700;">
+        <td>Media Geral</td>
+        <td class="score-cell">3.34</td>
+        <td class="score-cell score-mid">3.80</td>
+        <td>+0.46</td>
+        <td>--</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Notas maximas:</strong> Estrategista acionabilidade 5/5, Estrategista cobertura de estados 5/5, Pesquisador cobertura de estados 5/5.</p>
+
+  <div class="quality-warning">
+    O output do <strong>Designer Criativo</strong> ficou proximo do threshold (3.5). Considere as propostas visuais com a ressalva de que detalhes de implementacao (border-radius, cores fora de Andes X) precisam revisao antes de produzir.
+  </div>
+
+  <h3>Contradicoes Resolvidas</h3>
+  <ul>
+    <li><strong>Confetti como padrao vs. teste:</strong> Resolvido -- default SEM confetti (check + badge), confetti como variante a testar. Justificativa: 34% consideram celebracao excessiva "trust-breaking".</li>
+    <li><strong>Progressive disclosure vs. front-loaded:</strong> Resolvido parcialmente -- variante C adicionada a Proposta 5 para testar progressive disclosure vs. checklist completo.</li>
+  </ul>
+
+  <h3>Contradicoes Parciais (Trade-offs Documentados)</h3>
+  <ul>
+    <li><strong>Front-loaded (Zeigarnik) vs. progressive (curiosidade):</strong> Ambos tem evidencia. Zeigarnik: ver lista incompleta motiva. Progressive: revelar gradualmente cria curiosidade. Recomendacao: testar ambos (variantes A/B/C da Proposta 5).</li>
+    <li><strong>Auto-segmentacao (pergunta) vs. deteccao comportamental:</strong> MVP com pergunta explicita, evoluir para inferencia comportamental em H2/H3.</li>
+  </ul>
+
+  <h3>Perspectivas Alternativas</h3>
+  <ul>
+    <li><strong>Zero-onboarding (Cash App) pode ser mais impactante que otimizar o onboarding:</strong> Se 70% completam transacao em &lt;2 min sem onboarding formal, talvez o melhor onboarding seja nenhum. Considerar "value first, account later" como H2.</li>
+    <li><strong>Personalizacao visual pode ser prematura:</strong> Restricoes de bandeira + cores fora de Andes X = risco de esforco alto para incerteza alta. Priorizar copy personalizado (sem risco visual) primeiro.</li>
+    <li><strong>Gamificacao em fintech LatAm pode ter efeito diferente de US/UK:</strong> Dados sao majoritariamente de mercados desenvolvidos. Publico com baixa familiaridade pode reagir diferente a badges/progresso.</li>
+  </ul>
+
+  <h3>Impacto Regulatorio</h3>
+  <ul>
+    <li><strong>LGPD:</strong> Saldo em banner requer avaliacao juridica -- dado pessoal sensivel visivel na home.</li>
+    <li><strong>BACEN:</strong> Campos KYC obrigatorios nao podem ser removidos -- desmistificacao e aditiva.</li>
+    <li><strong>CDC:</strong> Informacoes obrigatorias do carousel atual precisam ter alternativa se carousel for removido.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECAO 11: HISTORICO DE ITERACOES                               -->
+<!-- ============================================================ -->
+<section id="iteracoes">
+  <div class="section-number">Secao 11</div>
+  <h2>Historico de Iteracoes</h2>
+  <p class="section-intro">Este relatorio passou por <strong>2 rodadas</strong> de avaliacao. Todos os 4 agentes foram re-chamados na rodada 2.</p>
+
+  <div class="iteration-timeline">
+    <div class="iteration">
+      <h4>Rodada 1 -- Execucao Inicial</h4>
+      <p><strong>Agentes despachados:</strong> Pesquisador, Deep-web Researcher, Estrategista, Designer Criativo</p>
+      <p><strong>Lacunas identificadas pelo critico:</strong></p>
+      <ul>
+        <li>Pesquisador: faltavam estados de UI nos benchmarks e exemplos concretos com Andes X</li>
+        <li>Deep-web: faltava viabilidade Andes X e conexao UX-negocio com tiers de evidencia</li>
+        <li>Estrategista: faltavam edge cases para as 5 hipoteses e rastreabilidade RICE</li>
+        <li>Designer: faltava rastreabilidade (friccao -> dado -> hipotese), metricas e tinha erros de CSS</li>
+      </ul>
+      <p><strong>Score medio:</strong> 3.34</p>
+    </div>
+
+    <div class="iteration">
+      <h4>Rodada 2 -- Re-iteracao Completa</h4>
+      <p><strong>Todos os 4 agentes re-chamados com briefings especificos:</strong></p>
+      <ul>
+        <li><strong>Pesquisador:</strong> +estados de UI nos benchmarks (loading/empty/error), +5 exemplos concretos com componentes Andes X</li>
+        <li><strong>Deep-web:</strong> +viabilidade Andes X para cada padrao, +conexao UX-negocio com tiers de evidencia (Tier 1-3)</li>
+        <li><strong>Estrategista:</strong> +edge cases detalhados para 5 hipoteses (API offline, saldo zero, loading), +rastreabilidade RICE completa</li>
+        <li><strong>Designer:</strong> +rastreabilidade (friccao -> dado -> hipotese) em cada proposta, +metricas, +correcoes CSS (border-radius)</li>
+      </ul>
+      <p><strong>Resolucoes do critico:</strong> Confetti invertido (default sem), progressive disclosure como variante C, notas editoriais nas propostas.</p>
+      <p><strong>Score medio:</strong> 3.80 (+0.46)</p>
+    </div>
+  </div>
+
+  <h3>Evolucao de Scores por Agente</h3>
+  <table>
+    <thead><tr><th>Agente</th><th>R1</th><th>R2</th><th>Maior Melhoria</th></tr></thead>
+    <tbody>
+      <tr><td>Pesquisador</td><td>3.25</td><td>4.0</td><td>Cobertura de estados (5/5) e exemplos Andes X</td></tr>
+      <tr><td>Deep-web</td><td>3.25</td><td>3.6</td><td>Tiers de evidencia e viabilidade Andes X</td></tr>
+      <tr><td>Estrategista</td><td>3.50</td><td>4.1</td><td>Edge cases (5/5) e acionabilidade (5/5)</td></tr>
+      <tr><td>Designer</td><td>3.36</td><td>3.5</td><td>Rastreabilidade por proposta</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  <p>Gerado por <strong>UX Design Crew</strong> em 2026-04-08</p>
+  <p>Powered by <a href="https://claude.ai/code">Claude Code</a></p>
+</footer>
+
+</body>
+</html>

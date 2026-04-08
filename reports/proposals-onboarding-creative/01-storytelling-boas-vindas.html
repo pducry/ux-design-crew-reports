@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta 1 — Teu Mundo Financeiro</title>
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F4F5F9;
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+    min-height: 100vh;
+  }
+
+  .device-frame {
+    width: 412px;
+    min-height: 860px;
+    background: #FFFFFF;
+    border-radius: 48px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+  }
+
+  /* ===== TOKENS ANDES X ===== */
+  :root {
+    --accent-ui: #009EE3;
+    --accent-loud: #434CE4;
+    --accent-loud-hover: #353AC5;
+    --accent-loud-active: #272C96;
+    --accent-quiet: #1B2755;
+    --positive: #00A650;
+    --text-primary: #0D0D1B;
+    --text-secondary: #6B7194;
+    --text-on-fill: #FFFFFF;
+    --surface: #F4F5F9;
+    --background: #FFFFFF;
+    --brand-yellow: #FFE600;
+    --brand-cyan: #00BCFF;
+    --gray-100: #E7E8ED;
+  }
+
+  /* ===== STORYTELLING SCREENS ===== */
+  .story-container {
+    height: 860px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .story-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 80px 32px 48px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 500ms ease-out, transform 500ms ease-out;
+    pointer-events: none;
+  }
+
+  .story-screen.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  /* === Screen 1: Receber === */
+  .screen-1 {
+    background: linear-gradient(180deg, #00BCFF 0%, #FFFFFF 100%);
+  }
+
+  .screen-1 .story-visual {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .coin-cluster {
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+
+  .coin {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #333333;
+  }
+
+  .coin-main {
+    width: 120px; height: 120px;
+    background: var(--brand-yellow);
+    top: 40px; left: 40px;
+    font-size: 32px;
+    animation: coinPulse 2s ease-in-out infinite;
+    box-shadow: 0 8px 32px rgba(255, 230, 0, 0.4);
+    z-index: 2;
+  }
+
+  .coin-sm-1 {
+    width: 56px; height: 56px;
+    background: var(--brand-yellow);
+    opacity: 0.7;
+    top: 0; right: 20px;
+    font-size: 16px;
+    animation: coinFloat 3s ease-in-out infinite 0.5s;
+  }
+
+  .coin-sm-2 {
+    width: 40px; height: 40px;
+    background: var(--brand-yellow);
+    opacity: 0.5;
+    bottom: 10px; left: 10px;
+    font-size: 12px;
+    animation: coinFloat 3s ease-in-out infinite 1s;
+  }
+
+  .coin-sm-3 {
+    width: 48px; height: 48px;
+    background: var(--brand-yellow);
+    opacity: 0.6;
+    bottom: 0; right: 0;
+    font-size: 14px;
+    animation: coinFloat 3s ease-in-out infinite 1.5s;
+  }
+
+  @keyframes coinPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  @keyframes coinFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  /* === Screen 2: Guardar === */
+  .screen-2 {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F4F5F9 100%);
+  }
+
+  .vault-visual {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vault-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--positive) 0%, #00C961 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: vaultGrow 1.5s ease-out forwards;
+    box-shadow: 0 12px 40px rgba(0, 166, 80, 0.3);
+  }
+
+  .vault-amount {
+    font-size: 28px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.025em;
+  }
+
+  .vault-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    margin-top: 4px;
+  }
+
+  .vault-growth {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .vault-growth span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  @keyframes vaultGrow {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* === Screen 3: Pagar === */
+  .screen-3 {
+    background: linear-gradient(180deg, var(--brand-yellow) 0%, #FFFFFF 60%);
+  }
+
+  .pay-visual {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pay-card {
+    width: 260px;
+    height: 160px;
+    background: var(--accent-quiet);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: cardSlide 0.8s ease-out forwards;
+    box-shadow: 0 16px 48px rgba(27, 39, 85, 0.3);
+  }
+
+  .pay-card-brand {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brand-yellow);
+    letter-spacing: 0.05em;
+  }
+
+  .pay-card-dots {
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 4px;
+  }
+
+  .pay-card-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+  }
+
+  @keyframes cardSlide {
+    0% { transform: translateX(60px) rotate(8deg); opacity: 0; }
+    100% { transform: translateX(0) rotate(-2deg); opacity: 1; }
+  }
+
+  /* === Text Content === */
+  .story-content {
+    padding-bottom: 24px;
+  }
+
+  .story-headline {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin-bottom: 12px;
+  }
+
+  .screen-1 .story-headline {
+    color: #FFFFFF;
+  }
+
+  .story-body {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 32px;
+  }
+
+  .screen-1 .story-body {
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* === Navigation === */
+  .story-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    transition: all 300ms ease;
+  }
+
+  .dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--accent-loud);
+  }
+
+  .screen-1 .dot {
+    background: rgba(255,255,255,0.4);
+  }
+  .screen-1 .dot.active {
+    background: #FFFFFF;
+  }
+
+  /* === Buttons === */
+  .btn-loud {
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent-loud);
+    color: var(--text-on-fill);
+    font-family: Inter, -apple-system, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 2px 24px;
+    cursor: pointer;
+    transition: background 200ms ease;
+    min-width: 120px;
+  }
+
+  .btn-loud:hover { background: var(--accent-loud-hover); }
+  .btn-loud:active { background: var(--accent-loud-active); }
+
+  .btn-mute {
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--accent-loud);
+    font-family: Inter, -apple-system, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 2px 24px;
+    cursor: pointer;
+  }
+
+  .screen-1 .btn-mute {
+    color: #FFFFFF;
+  }
+
+  .btn-full {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent-loud);
+    color: var(--text-on-fill);
+    font-family: Inter, -apple-system, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 2px 24px;
+    cursor: pointer;
+    transition: background 200ms ease;
+  }
+
+  .btn-full:hover { background: var(--accent-loud-hover); }
+
+  /* === Skip link === */
+  .skip-link {
+    position: absolute;
+    top: 40px;
+    right: 32px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    z-index: 10;
+    padding: 8px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .screen-1 ~ .skip-link,
+  .skip-link--light {
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* ===== VARIANTE B: Copy com valor ===== */
+  .variant-label {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-loud);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 100;
+  }
+
+  /* ===== REDUCED MOTION ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .coin, .vault-circle, .pay-card {
+      animation: none !important;
+    }
+    .story-screen {
+      transition: opacity 200ms ease-out;
+      transform: none !important;
+    }
+    .story-screen.active {
+      transform: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="variant-label">Proposta 1 — Variante A: Beneficio qualitativo</div>
+
+<div class="device-frame">
+  <div class="story-container" id="storyContainer">
+
+    <!-- Screen 1: Receber -->
+    <div class="story-screen screen-1 active" data-screen="0">
+      <a href="#" class="skip-link skip-link--light" onclick="goToScreen(2); return false;" aria-label="Pular para criar conta">Pular</a>
+      <div class="story-visual">
+        <div class="coin-cluster" aria-hidden="true">
+          <div class="coin coin-main">$</div>
+          <div class="coin coin-sm-1">$</div>
+          <div class="coin coin-sm-2">$</div>
+          <div class="coin coin-sm-3">$</div>
+        </div>
+      </div>
+      <div class="story-content">
+        <h1 class="story-headline">Receba dinheiro<br>na hora</h1>
+        <p class="story-body">Pix, transferencias, pagamentos. Tudo cai direto na sua conta, sem espera.</p>
+        <div class="story-nav">
+          <div class="dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-loud" onclick="goToScreen(1)" style="background:#FFFFFF; color:var(--accent-loud);">Continuar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Guardar -->
+    <div class="story-screen screen-2" data-screen="1">
+      <a href="#" class="skip-link" onclick="goToScreen(2); return false;" aria-label="Pular para criar conta">Pular</a>
+      <div class="vault-visual">
+        <div class="vault-circle" aria-label="Seu dinheiro rendendo">
+          <div class="vault-amount">R$ 4,60</div>
+          <div class="vault-label">por mes</div>
+          <div class="vault-growth">
+            <span>+0,38% a.m.</span>
+          </div>
+        </div>
+      </div>
+      <div class="story-content">
+        <h1 class="story-headline">Seu dinheiro<br>cresce sozinho</h1>
+        <p class="story-body">Deixa parado e ele rende todo dia. Sem risco, sem complicacao. Voce acompanha tudo.</p>
+        <div class="story-nav">
+          <div class="dots">
+            <div class="dot"></div>
+            <div class="dot active"></div>
+            <div class="dot"></div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-mute" onclick="goToScreen(0)">Voltar</button>
+            <button class="btn-loud" onclick="goToScreen(2)">Continuar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: CTA -->
+    <div class="story-screen screen-3" data-screen="2">
+      <div class="pay-visual">
+        <div class="pay-card" aria-hidden="true">
+          <div class="pay-card-brand">MERCADO PAGO</div>
+          <div class="pay-card-dots">**** **** **** 0000</div>
+          <div class="pay-card-name">SEU NOME AQUI</div>
+        </div>
+      </div>
+      <div class="story-content">
+        <h1 class="story-headline">Pague do seu<br>jeito</h1>
+        <p class="story-body">Cartao virtual, Pix, boleto. Voce escolhe e a gente facilita.</p>
+        <div class="dots" style="margin-bottom:24px;">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+        </div>
+        <button class="btn-full" onclick="alert('Navegar para cadastro')">Criar minha conta gratis</button>
+        <div style="text-align:center; margin-top:16px;">
+          <button class="btn-mute" onclick="alert('Login')" style="color:var(--text-secondary); font-size:14px;">Ja tenho conta</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentScreen = 0;
+  const screens = document.querySelectorAll('.story-screen');
+
+  function goToScreen(index) {
+    screens[currentScreen].classList.remove('active');
+    screens[index].classList.add('active');
+    currentScreen = index;
+  }
+
+  // Swipe support
+  let startX = 0;
+  const container = document.getElementById('storyContainer');
+  container.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+  container.addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 60) {
+      if (diff > 0 && currentScreen < 2) goToScreen(currentScreen + 1);
+      if (diff < 0 && currentScreen > 0) goToScreen(currentScreen - 1);
+    }
+  });
+</script>
+
+</body>
+</html>
